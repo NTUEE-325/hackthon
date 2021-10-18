@@ -6,7 +6,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
 # For static images:
-IMAGE_FILES = ["./16.jpg"]
+IMAGE_FILES = ["./11.jpg"]
 BG_COLOR = (192, 192, 192) # gray
 with mp_pose.Pose(
     static_image_mode=True,
@@ -43,7 +43,7 @@ with mp_pose.Pose(
         results.pose_landmarks,
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-    cv2.imwrite('/tmp' + str(idx) + '.png', annotated_image)
+    cv2.imwrite('./tmp/' + str(file), annotated_image)
     # Plot pose world landmarks.
     mp_drawing.plot_landmarks(
         results.pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
