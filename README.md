@@ -1,7 +1,8 @@
 # hackthon
 
 pip install -r requirements.txt
-run test.py
+put file_path in IMAGE_FILES
+python test.py
 
 detect distance => maybe detect left and right
 
