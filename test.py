@@ -6,7 +6,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
 # For static images:
-IMAGE_FILES = ["./18.jpg"]
+IMAGE_FILES = ["./19.jpg"]
 BG_COLOR = (192, 192, 192) # gray
 with mp_pose.Pose(
     static_image_mode=True,
@@ -24,8 +24,9 @@ with mp_pose.Pose(
       continue
     print(
         f'Nose coordinates: ('
-        f'{results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x * image_width}, '
-        f'{results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y * image_height})'
+        f'{results.pose_landmarks.landmark[23].x * image_width}, '
+        f'{results.pose_landmarks.landmark[23].y * image_height}, '
+        f'{results.pose_landmarks.landmark[23].visibility})'
     )
     
     
