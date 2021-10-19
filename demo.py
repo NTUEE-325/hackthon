@@ -31,7 +31,12 @@ with mp_pose.Pose(
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
     # Flip the image horizontally for a selfie-view display.
-    cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
+    image = cv2.flip(image, 1)
+    if results.pose_landmarks:
+        text = str(results.pose_landmarks.landmark[23].visibility)
+        cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
+        1, (0, 255, 255), 1, cv2.LINE_AA)
+    cv2.imshow('MediaPipe Pose', image)
     if cv2.waitKey(5) & 0xFF == 27:
       break
 cap.release()
