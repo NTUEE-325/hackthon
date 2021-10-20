@@ -8,7 +8,7 @@ IMAGE_FILES = []
 with mp_objectron.Objectron(static_image_mode=True,
                             max_num_objects=5,
                             min_detection_confidence=0.5,
-                            model_name='Shoe') as objectron:
+                            model_name='Chair') as objectron:
   for idx, file in enumerate(IMAGE_FILES):
     image = cv2.imread(file)
     # Convert the BGR image to RGB and process it with MediaPipe Objectron.
@@ -33,7 +33,7 @@ with mp_objectron.Objectron(static_image_mode=False,
                             max_num_objects=5,
                             min_detection_confidence=0.5,
                             min_tracking_confidence=0.99,
-                            model_name='Shoe') as objectron:
+                            model_name='Chair') as objectron:
   while cap.isOpened():
     success, image = cap.read()
     if not success:
