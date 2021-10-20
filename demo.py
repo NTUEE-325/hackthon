@@ -36,6 +36,9 @@ with mp_pose.Pose(
         text = str(results.pose_landmarks.landmark[23].visibility)
         cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
         1, (0, 255, 255), 1, cv2.LINE_AA)
+        text2 = str(results.pose_landmarks.landmark[25].visibility)
+        cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
+        1, (0, 255, 255), 1, cv2.LINE_AA)
     cv2.imshow('MediaPipe Pose', image)
     if cv2.waitKey(5) & 0xFF == 27:
       break
