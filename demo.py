@@ -61,7 +61,7 @@ while cap.isOpened():
         text = str(results.pose_landmarks.landmark[23].visibility)
         cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
         1, (0, 255, 255), 1, cv2.LINE_AA)
-        text2 = str(results.pose_landmarks.landmark[25].visibility)
+        text2 = str(results.pose_landmarks.landmark[15].visibility)
         cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
         1, (0, 255, 255), 1, cv2.LINE_AA)
         text3 = 'fps:' + str(fps)
