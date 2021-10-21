@@ -1,5 +1,6 @@
 
 from pose_classification import *
+from mediapipe.python.solutions import pose as mp_pose
 
 
 class_name='pushups_up'
@@ -7,7 +8,7 @@ out_video_path = 'test3-out.mov'
 
 # Open the video.
 import cv2
-video_cap = cv2.VideoCapture('test2.mov')
+video_cap = cv2.VideoCapture(0)
 
 # Get some video parameters to generate output video with classificaiton.
 video_n_frames = video_cap.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -24,10 +25,10 @@ from mediapipe.python.solutions import pose as mp_pose
 
 # Folder with pose class CSVs. That should be the same folder you using while
 # building classifier to output CSVs.
-pose_samples_folder = 'fitness_poses_csvs_out'
+pose_samples_folder = '../data/fitness_poses_csvs_out'
 
 # Initialize tracker.
-pose_tracker = mp_pose.Pose(upper_body_only=False)
+pose_tracker = mp_pose.Pose()
 
 # Initialize embedder.
 pose_embedder = FullBodyPoseEmbedder()
@@ -69,8 +70,11 @@ out_video = cv2.VideoWriter(out_video_path, cv2.VideoWriter_fourcc(*'mp4v'), vid
 
 frame_idx = 0
 output_frame = None
+print("hi")
 with tqdm.tqdm(total=video_n_frames, position=0, leave=True) as pbar:
+  print("hi")
   while True:
+    print("hi")
     # Get next frame of the video.
     success, input_frame = video_cap.read()
     if not success:
@@ -130,8 +134,8 @@ with tqdm.tqdm(total=video_n_frames, position=0, leave=True) as pbar:
     #out_video.write(cv2.cvtColor(np.array(output_frame), cv2.COLOR_RGB2BGR))
     
     # Show intermediate frames of the video to track progress.
-    if frame_idx % 50 == 0:
-      show_image(output_frame)
+    
+    show_image(output_frame)
 
     frame_idx += 1
     pbar.update()
