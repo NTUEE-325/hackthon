@@ -1,9 +1,10 @@
 import math
 import cv2
 import numpy as np
-from time import time
+import time
 import mediapipe as mp
 import matplotlib.pyplot as plt
+mp_drawing_styles = mp.solutions.drawing_styles
 
 # Initializing mediapipe pose class.
 mp_pose = mp.solutions.pose
@@ -192,18 +193,42 @@ def classifyPose(landmarks, output_image, display=False):
         label = 'hands-curl'
 
     return label
-
-
 cap = cv2.VideoCapture(0)
-
-while cap.isOpened():
+with mp_pose.Pose(
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5) as pose:
+  while cap.isOpened():
+    start = time.time()
     success, image = cap.read()
-    print(success)
     if not success:
-        continue
+      print("Ignoring empty camera frame.")
+      # If loading a video, use 'break' instead of 'continue'.
+      continue
+
+    # To improve performance, optionally mark the image as not writeable to
+    # pass by reference.
+    image.flags.writeable = False
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = pose.process(image)
+
+    # Draw the pose annotation on the image.
+    image.flags.writeable = True
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     output_image, landmarks = detectPose(image, pose, display=False)
     if landmarks:
         classifyPose(landmarks, output_image, display=True)
 
-    cv2.imshow('gym', image)
+    mp_drawing.draw_landmarks(
+        image,
+        results.pose_landmarks,
+        mp_pose.POSE_CONNECTIONS,
+        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+    # Flip the image horizontally for a selfie-view display.
+    end = time.time()
+    print(1/(end-start))
+    cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
+    if cv2.waitKey(5) & 0xFF == 27:
+      break
+cap.release()
+    
