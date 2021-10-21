@@ -17,4 +17,4 @@ def night_detect(image):
     return False
 
 def study_detect(image):
-    return True
+    return False

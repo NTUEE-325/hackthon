@@ -202,12 +202,24 @@ def classifyPose(landmarks):
     return label
 
 
-def gym_detect(landmarks, detect_times):
+
+
+def gym_detect(image, results_pose_landmarks, detect_times):
     # detect_times:
     # [0]: detect hands-curl
     # [1]: detect hands-down
     # [2]: detect push-up-up
     # [3]: detect push-up-down
+
+    #unormalized
+
+    height, width, _ = image.shape
+    landmarks = []
+    if results_pose_landmarks:
+        for landmark in results_pose_landmarks.landmark:
+            landmarks.append((int(landmark.x * width), int(landmark.y * height),
+                              (landmark.z * width)))
+
     if landmarks:
         label = classifyPose(landmarks)
         if(label == "hands-curl"):

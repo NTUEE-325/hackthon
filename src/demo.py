@@ -112,12 +112,13 @@ while cap.isOpened():
 
         
 
-        elif gym_detect(results.pose_landmarks.landmark, detect_times):
+        elif gym_detect(image, results.pose_landmarks, detect_times):
             # send signal
-            print("gym")
+            
+            print("gym:", gym_detect(image, results.pose_landmarks, detect_times))
 
         
-        elif study_detect():
+        elif study_detect(image):
             print("study")
 
         
