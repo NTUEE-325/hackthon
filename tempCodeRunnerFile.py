@@ -1,1 +1,0 @@
-    # Plot pose world landmarks.
