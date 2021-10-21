@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import time
-#from gym import *
+from gym import *
 from utility import *
 
 mp_drawing = mp.solutions.drawing_utils
@@ -85,6 +85,7 @@ while cap.isOpened():
             last_time = time.time()
 
             text = "Night Mode"
+            print("night mode")
             cv2.putText(image, text, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,
             1, (0, 255, 255), 1, cv2.LINE_AA)
 
@@ -111,23 +112,20 @@ while cap.isOpened():
 
         
 
-        elif gym_detect(pose_landmarks):
+        elif gym_detect(results.pose_landmarks.landmark, detect_times):
             # send signal
+            print("gym")
 
-        """
-
+        
         elif study_detect():
-            print("Hi")
+            print("study")
 
         
         else:
             if cur_time-last_time > buffer_time:
-                
+                print("normal")
                 # send normal signal to arduino
-        
-        """
 
-        
     else:
         results2 = objectron.process(image)
         if results2.detected_objects:

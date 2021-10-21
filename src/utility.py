@@ -2,7 +2,7 @@ import mediapipe as mp
 mp_pose = mp.solutions.pose
 import cv2
 
-LIGHT_THRESHOLD = 200
+LIGHT_THRESHOLD = 100
 
 def get_body(pose_landmarks):
     x = (pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].x + pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x) / 2

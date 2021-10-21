@@ -16,9 +16,9 @@ pose = mp_pose.Pose(static_image_mode=True,
 # Initializing mediapipe drawing class, useful for annotation.
 mp_drawing = mp.solutions.drawing_utils
 
-
+'''
 def detectPose(image, pose, display=True):
-    '''
+    
     This function performs pose detection on an image.
     Args:
         image: The input image with a prominent person whose pose landmarks needs to be detected.
@@ -28,7 +28,7 @@ def detectPose(image, pose, display=True):
     Returns:
         output_image: The input image with the detected pose landmarks drawn.
         landmarks: A list of detected landmarks converted into their original scale.
-    '''
+    
 
     # Create a copy of the input image.
     output_image = image.copy()
@@ -80,7 +80,7 @@ def detectPose(image, pose, display=True):
     # Otherwise
     else:
         return output_image, landmarks
-
+'''
 
 def calculateAngle(landmark1, landmark2, landmark3):
     '''
@@ -115,7 +115,7 @@ def calculateAngle(landmark1, landmark2, landmark3):
     return angle
 
 
-def classifyPose(landmarks, output_image, display=False):
+def classifyPose(landmarks):
     '''
     This function classifies yoga poses depending upon the angles of various body joints.
     Args:
@@ -209,7 +209,7 @@ def gym_detect(landmarks, detect_times):
     # [2]: detect push-up-up
     # [3]: detect push-up-down
     if landmarks:
-        label = classifyPose(landmarks, display=True)
+        label = classifyPose(landmarks)
         if(label == "hands-curl"):
             detect_times[0] = time.time()
         if(label == "hands-down"):
@@ -219,7 +219,7 @@ def gym_detect(landmarks, detect_times):
         if(time.time()-detect_times[0] > 5 or time.time()-detect_times[1] > 5):
             dumbbell = False
 
-        label = classifyPose(landmarks, display=True)
+        label = classifyPose(landmarks)
         if(label == "push-up-up"):
             detect_times[2] = time.time()
         if(label == "push-up-down"):
