@@ -27,6 +27,9 @@ def get_body(pose_landmarks):
     return (x,y)
 
 def night_detect(image):
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    lightness = hsv_image[:,:,2].mean()
+    print(lightness)
 
 pose = mp_pose.Pose(
     min_detection_confidence=0.5,
@@ -81,8 +84,8 @@ while cap.isOpened():
         
         # if observe gym pose
         # enter gym mode
-        """
-        if night_detect():
+        
+        if night_detect(image):
             
             # detect if the quilt cover the body
 
@@ -106,10 +109,7 @@ while cap.isOpened():
 
                 #send to arduino (direction_x, direction_y)
 
-
-
-
-
+        """
         elif gym_detect(pose_landmarks):
             print("hi")
 

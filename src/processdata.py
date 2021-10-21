@@ -7,29 +7,36 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 BG_COLOR = (192, 192, 192) # gray
 dir = "./datas/sleep_with_quilt"
+
+def night_detect(image):
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    lightness = hsv_image[:,:,2].mean()
+    print(lightness)
+
 with mp_pose.Pose(
     static_image_mode=True,
     model_complexity=2,
     enable_segmentation=True,
     min_detection_confidence=0.5) as pose:
   for file in os.listdir(dir):
-    
+    print(file)
     image = cv2.imread(dir +'/'+ file)
     image_height, image_width, _ = image.shape
     # Convert the BGR image to RGB before processing.
     results = pose.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-
+    
+    night_detect(image)
     if not results.pose_landmarks:
       continue
+    """
     print(
         f'{file}: ('
         f'{results.pose_landmarks.landmark[23].x}, '
         f'{results.pose_landmarks.landmark[23].y}, '
         f'{results.pose_landmarks.landmark[23].visibility})'
     )
-    print(results.segmentation_mask.shape)
-    print(image_width, image_height)
-    print(results.pose_landmarks.landmark[23].y)
+    """
+    
     """
     print(
         results.segmentation_mask[int(results.pose_landmarks.landmark[23].y * image_height)][int(results.pose_landmarks.landmark[23].x * image_width)]
