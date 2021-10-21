@@ -5,8 +5,8 @@ import cv2
 LIGHT_THRESHOLD = 200
 
 def get_body(pose_landmarks):
-    x = pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].x + pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x
-    y = pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].y + pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y
+    x = (pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].x + pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x) / 2
+    y = (pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].y + pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y) /2
     return (x,y)
 
 def night_detect(image):
@@ -15,3 +15,6 @@ def night_detect(image):
     if lightness < LIGHT_THRESHOLD:
         return True
     return False
+
+def study_detect(image):
+    return True

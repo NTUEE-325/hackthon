@@ -23,13 +23,14 @@ objectron2 = mp_objectron.Objectron(static_image_mode=False,
                             min_tracking_confidence=0.99,
                             model_name='Cup')
 
-
+detect_times = [time.time(),0,time.time(),0]
 
 pose = mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5)
 
 cap = cv2.VideoCapture(0)
+
 
 mode = "normal"
 # modes = [normal, study, night, gym]
@@ -81,6 +82,8 @@ while cap.isOpened():
         
         if night_detect(image):
             
+            last_time = time.time()
+
             text = "Night Mode"
             cv2.putText(image, text, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,
             1, (0, 255, 255), 1, cv2.LINE_AA)
@@ -106,32 +109,36 @@ while cap.isOpened():
 
                 #send to arduino (direction_x, direction_y)
 
-        """
+        
+
         elif gym_detect(pose_landmarks):
             # send signal
 
+        """
 
         elif study_detect():
             print("Hi")
 
-
+        
         else:
             if cur_time-last_time > buffer_time:
-                mode = "normal"
+                
                 # send normal signal to arduino
+        
         """
-
 
         
     else:
         results2 = objectron.process(image)
         if results2.detected_objects:
             for detected_object in results2.detected_objects:
+                print(detected_object)
+                """
                 mp_drawing.draw_landmarks(
                 image, detected_object.landmarks_2d, mp_objectron.BOX_CONNECTIONS)
                 mp_drawing.draw_axis(image, detected_object.rotation,
                                     detected_object.translation)
-
+                """
     #text3 = 'fps:' + str(fps)
     #cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
     #1, (0, 255, 255), 1, cv2.LINE_AA)
