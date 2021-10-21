@@ -109,6 +109,8 @@ def calculateAngle(landmark1, landmark2, landmark3):
         # Add 360 to the found angle.
         angle += 360
 
+    if angle > 180:
+        angle = 360-angle
     # Return the calculated angle.
     return angle
 
@@ -174,61 +176,106 @@ def classifyPose(landmarks, output_image, display=False):
                                      landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
                                      landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value])
 
-    if left_elbow_angle > 75 and left_elbow_angle < 95 and right_elbow_angle > 75 and right_elbow_angle < 95:
-        if left_shoulder_angle < 20 and right_shoulder_angle < 20:
-            if left_knee_angle > 165 and left_knee_angle < 195 and right_knee_angle > 165 and right_knee_angle < 195:
-                if left_hip_angle > 165 and left_hip_angle < 195 and right_hip_angle > 165 and right_hip_angle < 195:
+    if left_elbow_angle > 60 and right_elbow_angle > 60:
+        if left_shoulder_angle < 30 and right_shoulder_angle < 30:
+            if left_knee_angle > 155 and right_knee_angle > 155:
+                if left_hip_angle > 155 and right_hip_angle > 155:
                     label = 'push-up-down'
 
-    if left_elbow_angle < 15 and right_elbow_angle < 15:
-        if left_shoulder_angle > 70 and right_shoulder_angle > 70:
-            if left_knee_angle > 165 and left_knee_angle < 195 and right_knee_angle > 165 and right_knee_angle < 195:
-                if left_hip_angle > 165 and left_hip_angle < 195 and right_hip_angle > 165 and right_hip_angle < 195:
+    if left_elbow_angle < 25 and right_elbow_angle < 25:
+        if left_shoulder_angle > 60 and right_shoulder_angle > 60:
+            if left_knee_angle > 155 and right_knee_angle > 155:
+                if left_hip_angle > 155 and right_hip_angle > 155:
                     label = 'push-up-up'
 
-    if left_elbow_angle > 170 and left_shoulder_angle < 10 and right_elbow_angle > 170 and right_shoulder_angle < 10:
+    if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
         label = 'hands-down'
 
-    if (left_elbow_angle < 90 or right_elbow_angle < 90) and (left_shoulder_angle < 10 and right_shoulder_angle < 10):
+    if (left_elbow_angle < 90 or right_elbow_angle < 90) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
         label = 'hands-curl'
 
+    '''print("left shoulder:", left_shoulder_angle)
+    print("right shoulder:", right_shoulder_angle)
+    print("left elbow", left_elbow_angle)
+    print("right elbow", right_elbow_angle)'''
+
     return label
+
+
+# time detecting the action(dumbbell)
+detect_time1 = time.time()
+detect_time2 = 0
+# boolean value detecting the gym actions
+dumbbell = False
+
+# time detecting the action
+detect_time3 = time.time()
+detect_time4 = 0
+# boolean value detecting the gym actions
+pushups = False
+
 cap = cv2.VideoCapture(0)
 with mp_pose.Pose(
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5) as pose:
-  while cap.isOpened():
-    start = time.time()
-    success, image = cap.read()
-    if not success:
-      print("Ignoring empty camera frame.")
-      # If loading a video, use 'break' instead of 'continue'.
-      continue
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5) as pose:
 
-    # To improve performance, optionally mark the image as not writeable to
-    # pass by reference.
-    image.flags.writeable = False
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = pose.process(image)
+    while cap.isOpened():
+        success, image = cap.read()
+        if not success:
+            print("Ignoring empty camera frame.")
+            # If loading a video, use 'break' instead of 'continue'.
+            continue
 
-    # Draw the pose annotation on the image.
-    image.flags.writeable = True
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        # To improve performance, optionally mark the image as not writeable to
+        # pass by reference.
+        image.flags.writeable = False
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = pose.process(image)
 
-    output_image, landmarks = detectPose(image, pose, display=False)
-    if landmarks:
-        classifyPose(landmarks, output_image, display=True)
+        # Draw the pose annotation on the image.
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    mp_drawing.draw_landmarks(
-        image,
-        results.pose_landmarks,
-        mp_pose.POSE_CONNECTIONS,
-        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-    # Flip the image horizontally for a selfie-view display.
-    end = time.time()
-    print(1/(end-start))
-    cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
-    if cv2.waitKey(5) & 0xFF == 27:
-      break
+        mp_drawing.draw_landmarks(
+            image,
+            results.pose_landmarks,
+            mp_pose.POSE_CONNECTIONS,
+            landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+        # Flip the image horizontally for a selfie-view display.
+        '''end = time.time()
+        print(1/(end-start))'''
+
+        cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
+        if cv2.waitKey(5) & 0xFF == 27:
+            break
+
+        output_image, landmarks = detectPose(image, pose, display=False)
+        if landmarks:
+            label = classifyPose(landmarks, output_image, display=True)
+            if(label == "hands-curl"):
+                detect_time1 = time.time()
+            if(label == "hands-down"):
+                detect_time2 = time.time()
+            if(abs(detect_time2-detect_time1) < 5):
+                dumbbell = True
+            if(time.time()-detect_time1 > 5 or time.time()-detect_time2 > 5):
+                dumbbell = False
+
+            label = classifyPose(landmarks, output_image, display=True)
+            if(label == "push-up-up"):
+                detect_time3 = time.time()
+            if(label == "push-up-down"):
+                detect_time4 = time.time()
+            if(abs(detect_time4-detect_time3) < 10):
+                pushups = True
+            if(time.time()-detect_time1 > 15 or time.time()-detect_time2 > 15):
+                pushups = False
+
+        if(pushups):
+            print("push-up")
+        elif(dumbbell):
+            print("dumbbell")
+        else:
+            print("no detection")
+
 cap.release()
-    
