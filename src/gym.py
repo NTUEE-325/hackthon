@@ -201,26 +201,32 @@ def classifyPose(landmarks, output_image, display=False):
 
     return label
 
-def gym_detect(landmarks):
+
+def gym_detect(landmarks, detect_times):
+    # detect_times:
+    # [0]: detect hands-curl
+    # [1]: detect hands-down
+    # [2]: detect push-up-up
+    # [3]: detect push-up-down
     if landmarks:
-        label = classifyPose(landmarks, output_image, display=True)
+        label = classifyPose(landmarks, display=True)
         if(label == "hands-curl"):
-            detect_time1 = time.time()
+            detect_times[0] = time.time()
         if(label == "hands-down"):
-            detect_time2 = time.time()
-        if(abs(detect_time2-detect_time1) < 5):
+            detect_times[1] = time.time()
+        if(abs(detect_times[0]-detect_times[1]) < 5):
             dumbbell = True
-        if(time.time()-detect_time1 > 5 or time.time()-detect_time2 > 5):
+        if(time.time()-detect_times[0] > 5 or time.time()-detect_times[1] > 5):
             dumbbell = False
 
-        label = classifyPose(landmarks, output_image, display=True)
+        label = classifyPose(landmarks, display=True)
         if(label == "push-up-up"):
-            detect_time3 = time.time()
+            detect_times[2] = time.time()
         if(label == "push-up-down"):
-            detect_time4 = time.time()
-        if(abs(detect_time4-detect_time3) < 10):
+            detect_times[3] = time.time()
+        if(abs(detect_times[3]-detect_times[2]) < 10):
             pushups = True
-        if(time.time()-detect_time1 > 15 or time.time()-detect_time2 > 15):
+        if(time.time()-detect_times[2] > 15 or time.time()-detect_times[3] > 15):
             pushups = False
 
         if(pushups):
@@ -230,6 +236,7 @@ def gym_detect(landmarks):
         else:
             return False
     return False
+
 
 """
 # time detecting the action(dumbbell)
