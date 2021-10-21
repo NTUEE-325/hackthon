@@ -27,8 +27,21 @@ pose = mp_pose.Pose(
 
 cap = cv2.VideoCapture(0)
 
+mode = "normal"
+
+
+last_time = 0
+buffer_time = 60
+
 while cap.isOpened():
-    start = time.time()
+    
+    cur_time = time.time()
+    
+    if mode=="gym":
+        if cur_time-last_time > 
+    # if gym mode 
+    # last gym mode time 
+
     success, image = cap.read()
 
     if not success:
@@ -65,7 +78,10 @@ while cap.isOpened():
         cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
         1, (0, 255, 255), 1, cv2.LINE_AA)
 
-        # deal with gym mode
+        # deal with gym 
+        
+        # if observe gym pose
+        # enter gym mode
 
 
 
