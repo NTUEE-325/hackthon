@@ -108,7 +108,7 @@ while cap.isOpened():
 
         """
         elif gym_detect(pose_landmarks):
-            print("hi")
+            # send signal
 
 
         elif study_detect():

@@ -201,7 +201,37 @@ def classifyPose(landmarks, output_image, display=False):
 
     return label
 
+def gym_detect(landmarks):
+    if landmarks:
+        label = classifyPose(landmarks, output_image, display=True)
+        if(label == "hands-curl"):
+            detect_time1 = time.time()
+        if(label == "hands-down"):
+            detect_time2 = time.time()
+        if(abs(detect_time2-detect_time1) < 5):
+            dumbbell = True
+        if(time.time()-detect_time1 > 5 or time.time()-detect_time2 > 5):
+            dumbbell = False
 
+        label = classifyPose(landmarks, output_image, display=True)
+        if(label == "push-up-up"):
+            detect_time3 = time.time()
+        if(label == "push-up-down"):
+            detect_time4 = time.time()
+        if(abs(detect_time4-detect_time3) < 10):
+            pushups = True
+        if(time.time()-detect_time1 > 15 or time.time()-detect_time2 > 15):
+            pushups = False
+
+        if(pushups):
+            return "push-up"
+        elif(dumbbell):
+            return "dumbbell"
+        else:
+            return False
+    return False
+
+"""
 # time detecting the action(dumbbell)
 detect_time1 = time.time()
 detect_time2 = 0
@@ -213,6 +243,7 @@ detect_time3 = time.time()
 detect_time4 = 0
 # boolean value detecting the gym actions
 pushups = False
+
 
 cap = cv2.VideoCapture(0)
 with mp_pose.Pose(
@@ -279,3 +310,4 @@ with mp_pose.Pose(
             print("no detection")
 
 cap.release()
+"""
