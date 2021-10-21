@@ -176,14 +176,14 @@ def classifyPose(landmarks, output_image, display=False):
                                      landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
                                      landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value])
 
-    if left_elbow_angle > 60 and right_elbow_angle > 60:
+    if left_elbow_angle < 40 and right_elbow_angle < 40:
         if left_shoulder_angle < 30 and right_shoulder_angle < 30:
             if left_knee_angle > 155 and right_knee_angle > 155:
                 if left_hip_angle > 155 and right_hip_angle > 155:
                     label = 'push-up-down'
 
-    if left_elbow_angle < 25 and right_elbow_angle < 25:
-        if left_shoulder_angle > 60 and right_shoulder_angle > 60:
+    if left_elbow_angle > 150 and right_elbow_angle > 150:
+        if left_shoulder_angle > 70 and right_shoulder_angle > 70:
             if left_knee_angle > 155 and right_knee_angle > 155:
                 if left_hip_angle > 155 and right_hip_angle > 155:
                     label = 'push-up-up'
