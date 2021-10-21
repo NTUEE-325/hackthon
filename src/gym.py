@@ -193,6 +193,7 @@ def classifyPose(landmarks, output_image, display=False):
         label = 'hands-curl'
 
     return label
+
 cap = cv2.VideoCapture(0)
 with mp_pose.Pose(
     min_detection_confidence=0.5,

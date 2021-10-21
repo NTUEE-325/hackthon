@@ -2,7 +2,8 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import time
-from gym import *
+#from gym import *
+from utility import *
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -22,15 +23,7 @@ objectron2 = mp_objectron.Objectron(static_image_mode=False,
                             min_tracking_confidence=0.99,
                             model_name='Cup')
 
-def get_body(pose_landmarks):
-    x = pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].x + results.pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x
-    y = pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].y + results.pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y
-    return (x,y)
 
-def night_detect(image):
-    hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    lightness = hsv_image[:,:,2].mean()
-    print(lightness)
 
 pose = mp_pose.Pose(
     min_detection_confidence=0.5,
@@ -88,15 +81,18 @@ while cap.isOpened():
         
         if night_detect(image):
             
+            text = "Night Mode"
+            cv2.putText(image, text, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,
+            1, (0, 255, 255), 1, cv2.LINE_AA)
+
+
+            
             # detect if the quilt cover the body
 
-            if results.pose_landmarks[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8:
-                
+            if results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8:
                 # send signal
 
                 posX, posY = get_body(results.pos_landmarks)
-
-                
 
                 if posX > 0.5:
                     direction_x = "LEFT"
@@ -135,7 +131,6 @@ while cap.isOpened():
                 image, detected_object.landmarks_2d, mp_objectron.BOX_CONNECTIONS)
                 mp_drawing.draw_axis(image, detected_object.rotation,
                                     detected_object.translation)
-                print(detected_object.landmarks_2d)
 
     #text3 = 'fps:' + str(fps)
     #cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
