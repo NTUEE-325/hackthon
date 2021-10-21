@@ -64,6 +64,11 @@ while cap.isOpened():
         text2 = str(results.pose_landmarks.landmark[15].visibility)
         cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
         1, (0, 255, 255), 1, cv2.LINE_AA)
+
+        # deal with gym mode
+
+
+
         
     else:
         results2 = objectron.process(image)
@@ -74,7 +79,7 @@ while cap.isOpened():
                 mp_drawing.draw_axis(image, detected_object.rotation,
                                     detected_object.translation)
                 print(detected_object.landmarks_2d)
-                
+
     text3 = 'fps:' + str(fps)
     cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
     1, (0, 255, 255), 1, cv2.LINE_AA)
