@@ -13,7 +13,6 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 mp_objectron = mp.solutions.objectron
 
-
 objectron = mp_objectron.Objectron(static_image_mode=False,
                                    max_num_objects=1,
                                    min_detection_confidence=0.5,
