@@ -82,6 +82,7 @@ def detectPose(image, pose, display=True):
         return output_image, landmarks
 '''
 
+
 def calculateAngle(landmark1, landmark2, landmark3):
     '''
     This function calculates angle between three different landmarks.
@@ -115,7 +116,7 @@ def calculateAngle(landmark1, landmark2, landmark3):
     return angle
 
 
-def classifyPose(landmarks):
+def classifyPose(landmarks, landmarks_visibility):
     '''
     This function classifies yoga poses depending upon the angles of various body joints.
     Args:
@@ -137,7 +138,7 @@ def classifyPose(landmarks):
 
     # Calculate the required angles.
     # ----------------------------------------------------------------------------------------------------------------
-
+    # print(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER].visibility)
     # Get the angle between the left shoulder, elbow and wrist points.
     left_elbow_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value],
                                       landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value],
@@ -175,6 +176,10 @@ def classifyPose(landmarks):
     right_hip_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value],
                                      landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
                                      landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value])
+    # first check whether the body is in the scope.
+
+    enable_detection_pushup = (landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value] > 0.8 and landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value] > 0.8) or (
+        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] > 0.8 and landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value] > 0.8)
 
     if left_elbow_angle < 40 and right_elbow_angle < 40:
         if left_shoulder_angle < 30 and right_shoulder_angle < 30:
@@ -188,11 +193,12 @@ def classifyPose(landmarks):
                 if left_hip_angle > 155 and right_hip_angle > 155:
                     label = 'push-up-up'
 
-    if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
-        label = 'hands-down'
+    if enable_detection_pushup:
+        if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
+            label = 'hands-down'
 
-    if (left_elbow_angle < 90 or right_elbow_angle < 90) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
-        label = 'hands-curl'
+        if (left_elbow_angle < 90 or right_elbow_angle < 90) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
+            label = 'hands-curl'
 
     '''print("left shoulder:", left_shoulder_angle)
     print("right shoulder:", right_shoulder_angle)
@@ -202,8 +208,6 @@ def classifyPose(landmarks):
     return label
 
 
-
-
 def gym_detect(image, results_pose_landmarks, detect_times):
     # detect_times:
     # [0]: detect hands-curl
@@ -211,17 +215,21 @@ def gym_detect(image, results_pose_landmarks, detect_times):
     # [2]: detect push-up-up
     # [3]: detect push-up-down
 
-    #unormalized
+    # unnormalized
 
     height, width, _ = image.shape
     landmarks = []
+
+    landmarks_visibility = []
+
     if results_pose_landmarks:
         for landmark in results_pose_landmarks.landmark:
             landmarks.append((int(landmark.x * width), int(landmark.y * height),
                               (landmark.z * width)))
+            landmarks_visibility.append(landmark.visibility)
 
     if landmarks:
-        label = classifyPose(landmarks)
+        label = classifyPose(landmarks, landmarks_visibility)
         if(label == "hands-curl"):
             detect_times[0] = time.time()
         if(label == "hands-down"):
@@ -231,7 +239,7 @@ def gym_detect(image, results_pose_landmarks, detect_times):
         if(time.time()-detect_times[0] > 5 or time.time()-detect_times[1] > 5):
             dumbbell = False
 
-        label = classifyPose(landmarks)
+        label = classifyPose(landmarks, landmarks_visibility)
         if(label == "push-up-up"):
             detect_times[2] = time.time()
         if(label == "push-up-down"):
