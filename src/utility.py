@@ -4,14 +4,26 @@ import math
 mp_pose = mp.solutions.pose
 
 LIGHT_THRESHOLD = 100
+OBSERVE_DISTANCE_TO_IMAGE = 0.5
+
+# calculate the fan's angle according to the positions
+# obtained from the demo.py.
+
+
+def get_fan_angle(posX, posY):
+    return int(math.atan((posX-0.5)/OBSERVE_DISTANCE_TO_IMAGE)*180/math.pi+90), int(math.atan((posY-0.5)/OBSERVE_DISTANCE_TO_IMAGE)*180/math.pi+90)
 
 
 def get_body(pose_landmarks):
 
     x = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x +
-         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x) / 2
+         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x +
+         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x +
+         pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x) / 4
     y = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].y +
-         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y) / 2
+         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y +
+         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y +
+         pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y) / 4
     return (x, y)
 
 

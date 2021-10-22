@@ -32,7 +32,7 @@ cap = cv2.VideoCapture(0)
 
 mode = "init"
 # modes = [normal, study, night, gym]
-
+last_study_time = 0
 last_time = 0  # last time change mode
 buffer_time = 60
 last_time = 0  # last time change mode
@@ -57,7 +57,7 @@ sleepHistory = open("../data/SleepHistory.txt", 'x')
 while cap.isOpened():
     cur_time = time.time()
     success, image = cap.read()
-
+    h, w, _ = image.shape
     if not success:
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
@@ -170,6 +170,7 @@ while cap.isOpened():
     else:
         results2 = objectron.process(image)
         if results2.detected_objects:
+
             if mode != "normal":
                 print("normal mode")
                 mode = "normal"
@@ -190,6 +191,16 @@ while cap.isOpened():
     #text3 = 'fps:' + str(fps)
     # cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
     # 1, (0, 255, 255), 1, cv2.LINE_AA)
+
+    cv2.circle(
+        image, (int(air_conditioner_direction[0]*w), int(air_conditioner_direction[1]*h)), 15, (255, 0, 0), -1)
+    if results.pose_landmarks:
+        cv2.circle(
+            image, (int(get_body(results.pose_landmarks)[0]*w), int(get_body(results.pose_landmarks)[1]*h)), 15, (0, 255, 0), -1)
+        text3 = str(get_fan_angle(
+            air_conditioner_direction[0], air_conditioner_direction[1]))
+        cv2.putText(image, text3, (100, 150),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
     cv2.imshow('MediaPipe Pose', image)
     if cv2.waitKey(5) & 0xFF == 27:
         break
