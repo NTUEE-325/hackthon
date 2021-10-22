@@ -37,7 +37,8 @@ buffer_time = 5
 chair_pos = 0
 chair_size = 0
 
-air_conditioner_direction = [0, 0]  # direction of the wind
+# direction of the wind: initially at the center
+air_conditioner_direction = [0.5, 0.5]
 '''
 if want to have "opposite direction":
     1. detect the direction of people with respect to the point (0.5, 0.5)
@@ -87,7 +88,7 @@ while cap.isOpened():
         # print(get_body(results.pose_landmarks))
         # if observe gym pose
         # enter gym mode
-        posX, posY = get_body(results.pos_landmarks)
+
         if night_detect(image):
 
             last_time = time.time()
@@ -100,8 +101,10 @@ while cap.isOpened():
 
             if results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8:
                 # send signal
+                posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
+                print("air_conditioner_direction:", air_conditioner_direction)
                 # send to arduino (direction_x, direction_y)
 
         elif gym_detect(image, results.pose_landmarks, detect_times):
@@ -110,26 +113,32 @@ while cap.isOpened():
             if mode != "gym":
                 print("gym mode")
                 mode = "gym"
-                posX, posY = get_body(results.pos_landmarks)
+                posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction(
                     posX, posY)
+                print("air_conditioner_direction:", air_conditioner_direction)
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times))
 
         elif study_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = time.time()
             if mode != "study":
+                posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
                 print("study mode")
+                print("air_conditioner_direction:", air_conditioner_direction)
                 mode = "study"
 
         else:
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
+                    posX, posY = get_body(results.pose_landmarks)
                     air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                         posX, posY)
                     print("normal mode")
+                    print("air_conditioner_direction:",
+                          air_conditioner_direction)
                     mode = "normal"
                 # print("normal")
                 # send normal signal to arduino
