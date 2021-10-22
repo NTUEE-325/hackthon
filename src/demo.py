@@ -4,6 +4,7 @@ import numpy as np
 import time
 from gym import *
 from utility import *
+from controller import *
 import os
 if os.path.exists("../data/SleepHistory.txt"):
     os.remove("../data/SleepHistory.txt")
@@ -28,7 +29,7 @@ cap = cv2.VideoCapture(0)
 
 mode = "init"
 # modes = [normal, study, night, gym]
-last_study_time = 0
+last_detect_chair_time = 0
 last_time = 0  # last time change mode
 buffer_time = 5
 chair_pos = 0
@@ -76,7 +77,9 @@ while cap.isOpened():
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
     # Flip the image horizontally for a selfie-view display.
-
+    if cur_time-last_detect_chair_time>buffer_time and ( mode != "study") :
+        chair_pos = 0
+        chair_size = 0
     if results.pose_landmarks:
 
         # deal with gym
@@ -91,6 +94,7 @@ while cap.isOpened():
             if mode != "night":
                 print("night mode")
                 mode = "night"
+                SetMode("night")
 
             # detect if the quilt cover the body
             quilt_cover = False
@@ -113,6 +117,7 @@ while cap.isOpened():
             if mode != "gym":
                 print("gym mode")
                 mode = "gym"
+                SetMode("gym")
                 air_conditioner_direction = calculate_air_conditioner_direction(
                     posX, posY)
                 print("gym:", gym_detect(
@@ -130,26 +135,24 @@ while cap.isOpened():
         elif study_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = time.time()
             if mode != "study":
-                posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
                 print("study mode")
+                SetMode("study")
                 mode = "study"
             if mode == "study":
-                posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
 
         else:
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
-                    posX, posY = get_body(results.pose_landmarks)
+                    SetMode("normal")
                     air_conditioner_direction = (
                         calculate_air_conditioner_direction_inverse(posX, posY))
                     print("normal mode")
                     mode = "normal"
-                if mode == "normal":
-                    posX, posY = get_body(results.pose_landmarks)
+                else: 
                     air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                         posX, posY)
                 # print("normal")
@@ -158,8 +161,9 @@ while cap.isOpened():
     else:
         results2 = objectron.process(image)
         if results2.detected_objects:
-
+            last_detect_chair_time = time.time()
             if mode != "normal":
+                SetMode("normal")
                 print("normal mode")
                 mode = "normal"
             for detected_object in results2.detected_objects:
