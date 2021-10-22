@@ -82,15 +82,8 @@ while cap.isOpened():
     # Flip the image horizontally for a selfie-view display.
 
     if results.pose_landmarks:
-        #text = str(results.pose_landmarks.landmark[0].x)
-        # cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
-        #            1, (0, 255, 255), 1, cv2.LINE_AA)
-        #text2 = str(results.pose_landmarks.landmark[0].y)
-        # cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
-        #            1, (0, 255, 255), 1, cv2.LINE_AA)
 
         # deal with gym
-        # print(get_body(results.pose_landmarks))
         # if observe gym pose
         # enter gym mode
 
@@ -133,10 +126,10 @@ while cap.isOpened():
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times))
 
-                sleepHistory = open("../data/SleepHistory.txt", "a")
+                '''sleepHistory = open("../data/SleepHistory.txt", "a")
                 sleepHistory.write(
                     str(time.asctime(time.localtime(time.time())))+'\n')
-                sleepHistory.close()
+                sleepHistory.close()'''
 
             if mode == "gym":
                 posX, posY = get_body(results.pose_landmarks)
