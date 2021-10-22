@@ -26,7 +26,7 @@ pose = mp_pose.Pose(
 cap = cv2.VideoCapture(0)
 
 
-mode = "normal"
+mode = "init"
 # modes = [normal, study, night, gym]
 
 last_time = 0  # last time change mode
@@ -82,10 +82,9 @@ while cap.isOpened():
 
             last_time = time.time()
 
-            text = "Night Mode"
-            #print("night mode")
-            cv2.putText(image, text, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,
-                        1, (0, 255, 255), 1, cv2.LINE_AA)
+            if mode != "night":
+                print("night mode")
+                mode = "night"
 
             # detect if the quilt cover the body
 
@@ -109,27 +108,31 @@ while cap.isOpened():
         elif gym_detect(image, results.pose_landmarks, detect_times):
             # send signal
             last_time = time.time()
-
-            print("gym:", gym_detect(image, results.pose_landmarks, detect_times))
+            if mode != "gym":
+                print("gym mode")
+                mode = "gym"
+                print("gym:", gym_detect(image, results.pose_landmarks, detect_times))
 
         elif study_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = time.time()
-            print("study")
             if mode != "study":
-                # send signal
-                pass
-
-            print("study")
+                print("study mode")
+                mode = "study"
 
         else:
             if cur_time-last_time > buffer_time:
-                pass
+                if mode != "normal":
+                    print("normal mode")
+                    mode = "normal"
                 # print("normal")
                 # send normal signal to arduino
 
     else:
         results2 = objectron.process(image)
         if results2.detected_objects:
+            if mode != "normal":
+                    print("normal mode")
+                    mode = "normal"
             for detected_object in results2.detected_objects:
                 mp_drawing.draw_landmarks(
                     image, detected_object.landmarks_2d, mp_objectron.BOX_CONNECTIONS)
