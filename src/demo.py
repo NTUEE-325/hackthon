@@ -17,6 +17,7 @@ objectron = mp_objectron.Objectron(static_image_mode=False,
                                    min_tracking_confidence=0.99,
                                    model_name='Chair')
 
+# detect for the gym mode
 detect_times = [time.time(), 0, time.time(), 0]
 
 pose = mp_pose.Pose(
@@ -63,18 +64,17 @@ while cap.isOpened():
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
     # Flip the image horizontally for a selfie-view display.
-    
 
     if results.pose_landmarks:
         #text = str(results.pose_landmarks.landmark[0].x)
-        #cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
+        # cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
         #            1, (0, 255, 255), 1, cv2.LINE_AA)
         #text2 = str(results.pose_landmarks.landmark[0].y)
-        #cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
+        # cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
         #            1, (0, 255, 255), 1, cv2.LINE_AA)
 
         # deal with gym
-        #print(get_body(results.pose_landmarks))
+        # print(get_body(results.pose_landmarks))
         # if observe gym pose
         # enter gym mode
 
@@ -143,7 +143,6 @@ while cap.isOpened():
                 cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
                             1, (0, 255, 255), 1, cv2.LINE_AA)
                 chair_size = detected_object.scale
-                
 
     #text3 = 'fps:' + str(fps)
     # cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
