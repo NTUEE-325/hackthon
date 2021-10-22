@@ -21,8 +21,10 @@ def study_detect(pose_landmarks, chair_pos, chair_size):
     if chair_pos == 0:
         return False
     posX, posY = get_body(pose_landmarks)
-    print(chair_pos)
-    if chair_pos.x-(chair_size[0]/2) < posX and posX < chair_pos.x+(chair_size[0]/2):
-        if chair_pos.y - (chair_size[1]/2) < posY and posY < chair_pos.y+(chair_size[1]/2):
+    #print(posX, posY)
+    #print(chair_pos, chair_size)
+    if chair_pos.x-(chair_size[0]) < posX and posX < chair_pos.x+(chair_size[0]):
+        if chair_pos.y - (chair_size[1]) < posY and posY < chair_pos.y+(chair_size[1]):
+            print("study")
             return True
     return False
