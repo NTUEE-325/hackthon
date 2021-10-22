@@ -89,7 +89,7 @@ while cap.isOpened():
             last_time = time.time()
 
             text = "Night Mode"
-            #print("night mode")
+            print("night mode")
             cv2.putText(image, text, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,
                         1, (0, 255, 255), 1, cv2.LINE_AA)
 
@@ -130,7 +130,7 @@ while cap.isOpened():
         else:
             if cur_time-last_time > buffer_time:
                 pass
-                # print("normal")
+                print("normal")
                 # send normal signal to arduino
 
     else:
