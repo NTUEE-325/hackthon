@@ -119,6 +119,10 @@ while cap.isOpened():
                 print("air_conditioner_direction:", air_conditioner_direction)
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times))
+            if mode == "gym":
+                posX, posY = get_body(results.pose_landmarks)
+                air_conditioner_direction = calculate_air_conditioner_direction(
+                    posX, posY)
 
         elif study_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = time.time()
@@ -129,6 +133,10 @@ while cap.isOpened():
                 print("study mode")
                 print("air_conditioner_direction:", air_conditioner_direction)
                 mode = "study"
+            if mode == "study":
+                posX, posY = get_body(results.pose_landmarks)
+                air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                    posX, posY)
 
         else:
             if cur_time-last_time > buffer_time:
@@ -140,6 +148,10 @@ while cap.isOpened():
                     print("air_conditioner_direction:",
                           air_conditioner_direction)
                     mode = "normal"
+                if mode == "normal":
+                    posX, posY = get_body(results.pose_landmarks)
+                    air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                        posX, posY)
                 # print("normal")
                 # send normal signal to arduino
 
