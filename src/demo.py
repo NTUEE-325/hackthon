@@ -142,8 +142,8 @@ while cap.isOpened():
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
                     posX, posY = get_body(results.pose_landmarks)
-                    air_conditioner_direction = calculate_air_conditioner_direction_inverse(
-                        posX, posY)
+                    air_conditioner_direction = (
+                        calculate_air_conditioner_direction_inverse(posX, posY))
                     print("normal mode")
                     print("air_conditioner_direction:",
                           air_conditioner_direction)
