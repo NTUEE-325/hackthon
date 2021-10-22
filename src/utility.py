@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import math
+import time
 mp_pose = mp.solutions.pose
 
 LIGHT_THRESHOLD = 100
@@ -62,3 +63,9 @@ def calculate_air_conditioner_direction_inverse(posX, posY):
 
 def calculate_air_conditioner_direction(posX, posY):
     return posX, posY
+
+def record_dangerous_sleeping():
+    sleepHistory = open("../data/SleepHistory.txt", "a")
+    sleepHistory.write(time.time())
+    sleepHistory.close()
+    

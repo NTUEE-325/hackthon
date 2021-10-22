@@ -20,9 +20,6 @@ objectron = mp_objectron.Objectron(static_image_mode=False,
                                    min_tracking_confidence=0.99,
                                    model_name='Chair')
 
-# detect for the gym mode
-detect_times = [time.time(), 0, time.time(), 0, 0]
-
 pose = mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5)
@@ -34,11 +31,11 @@ mode = "init"
 # modes = [normal, study, night, gym]
 last_study_time = 0
 last_time = 0  # last time change mode
-buffer_time = 60
-last_time = 0  # last time change mode
 buffer_time = 5
 chair_pos = 0
 chair_size = 0
+# detect for the gym mode
+detect_times = [time.time(), 0, time.time(), 0, 0]
 
 # direction of the wind: initially at the center
 air_conditioner_direction = [0.5, 0.5]
@@ -86,6 +83,7 @@ while cap.isOpened():
         # deal with gym
         # if observe gym pose
         # enter gym mode
+        posX, posY = get_body(results.pose_landmarks)
 
         if night_detect(image):
 
@@ -100,12 +98,10 @@ while cap.isOpened():
             if results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8:
                 # send signal
                 if not quilt_cover:
-                    sleepHistory = open("../data/SleepHistory.txt", "a")
-                    sleepHistory.write(time.time())
-                    sleepHistory.close()
+                    record_dangerous_sleeping()
                     quilt_cover = True
 
-                posX, posY = get_body(results.pose_landmarks)
+                
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
                 # send to arduino (direction_x, direction_y)
@@ -118,7 +114,6 @@ while cap.isOpened():
             if mode != "gym":
                 print("gym mode")
                 mode = "gym"
-                posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction(
                     posX, posY)
                 print("gym:", gym_detect(
@@ -129,8 +124,7 @@ while cap.isOpened():
                     str(time.asctime(time.localtime(time.time())))+'\n')
                 sleepHistory.close()'''
 
-            if mode == "gym":
-                posX, posY = get_body(results.pose_landmarks)
+            else:
                 air_conditioner_direction = calculate_air_conditioner_direction(
                     posX, posY)
 
