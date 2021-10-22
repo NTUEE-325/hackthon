@@ -1,1 +1,1 @@
-p
+detected_object

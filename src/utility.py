@@ -5,8 +5,9 @@ import cv2
 LIGHT_THRESHOLD = 100
 
 def get_body(pose_landmarks):
-    x = (pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].x + pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].x) / 2
-    y = (pose_landmarks[mp_pose.PoseLandmark.LEFT_HIP].y + pose_landmarks[mp_pose.PoseLandmark.RIGHT_HIP].y) /2
+    
+    x = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x + pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x) / 2
+    y = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].y + pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y) /2
     return (x,y)
 
 def night_detect(image):
@@ -16,5 +17,12 @@ def night_detect(image):
         return True
     return False
 
-def study_detect(image):
+def study_detect(pose_landmarks, chair_pos, chair_size):
+    if chair_pos == 0:
+        return False
+    posX, posY = get_body(pose_landmarks)
+    print(chair_pos)
+    if chair_pos.x-(chair_size[0]/2) < posX and posX < chair_pos.x+(chair_size[0]/2):
+        if chair_pos.y - (chair_size[1]/2) < posY and posY < chair_pos.y+(chair_size[1]/2):
+            return True
     return False

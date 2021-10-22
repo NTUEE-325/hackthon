@@ -35,8 +35,16 @@ cap = cv2.VideoCapture(0)
 mode = "normal"
 # modes = [normal, study, night, gym]
 
+<<<<<<< HEAD
 last_time = 0  # last time change mode
 buffer_time = 60
+=======
+last_time = 0 #last time change mode
+buffer_time = 5
+chair_pos = 0
+chair_size = 0
+
+>>>>>>> ecd99f3 (update)
 
 while cap.isOpened():
     cur_time = time.time()
@@ -84,7 +92,7 @@ while cap.isOpened():
             last_time = time.time()
 
             text = "Night Mode"
-            print("night mode")
+            #print("night mode")
             cv2.putText(image, text, (50, 200), cv2.FONT_HERSHEY_SIMPLEX,
                         1, (0, 255, 255), 1, cv2.LINE_AA)
 
@@ -105,6 +113,7 @@ while cap.isOpened():
                 else:
                     direction_y = "DOWN"
 
+<<<<<<< HEAD
                 # send to arduino (direction_x, direction_y)
 
         elif gym_detect(image, results.pose_landmarks, detect_times):
@@ -113,24 +122,44 @@ while cap.isOpened():
             print("gym:", gym_detect(image, results.pose_landmarks, detect_times))
 
         elif study_detect(image):
+=======
+                #send to arduino (direction_x, direction_y)
+
+        elif gym_detect(image, results.pose_landmarks, detect_times):
+            # send signal
+            last_time = time.time()
+
+            #print("gym:", gym_detect(image, results.pose_landmarks, detect_times))
+
+        
+        elif study_detect(results.pose_landmarks, chair_pos, chair_size):
+            last_time = time.time()
+            print("study")
+            if mode != "study":
+                #send signal
+                pass
+
+>>>>>>> ecd99f3 (update)
             print("study")
 
         else:
             if cur_time-last_time > buffer_time:
-                print("normal")
+                pass
+                #print("normal")
                 # send normal signal to arduino
 
     else:
         results2 = objectron.process(image)
         if results2.detected_objects:
             for detected_object in results2.detected_objects:
-                print(detected_object)
-                """
                 mp_drawing.draw_landmarks(
                 image, detected_object.landmarks_2d, mp_objectron.BOX_CONNECTIONS)
                 mp_drawing.draw_axis(image, detected_object.rotation,
                                     detected_object.translation)
-                """
+                chair_pos = detected_object.landmarks_2d.landmark
+                chair_size = detected_object.scale
+                print(chair_pos, chair_size)
+                
     #text3 = 'fps:' + str(fps)
     # cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
     # 1, (0, 255, 255), 1, cv2.LINE_AA)
