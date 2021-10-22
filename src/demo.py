@@ -37,6 +37,16 @@ buffer_time = 5
 chair_pos = 0
 chair_size = 0
 
+air_conditioner_direction = [0, 0]  # direction of the wind
+'''
+if want to have "opposite direction":
+    1. detect the direction of people with respect to the point (0.5, 0.5)
+    2. air_conditioner_distance + people_position(respect to (0.5, 0.5)) remains constant (0.5)
+    ex. the people is in (0.2, 0.3). then the direction is (0.5, 0.5)+(0.3, 0.2)*sqrt(12)/sqrt(13)
+
+this is implemented in utility.py.
+'''
+air_conditioner_strength = 0  # strength of the air conditioner
 
 while cap.isOpened():
     cur_time = time.time()
@@ -77,7 +87,7 @@ while cap.isOpened():
         # print(get_body(results.pose_landmarks))
         # if observe gym pose
         # enter gym mode
-
+        posX, posY = get_body(results.pos_landmarks)
         if night_detect(image):
 
             last_time = time.time()
@@ -90,19 +100,8 @@ while cap.isOpened():
 
             if results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8:
                 # send signal
-
-                posX, posY = get_body(results.pos_landmarks)
-
-                if posX > 0.5:
-                    direction_x = "LEFT"
-                else:
-                    direction_x = "RIGHT"
-
-                if posY > 0.5:
-                    direction_y = "UP"
-                else:
-                    direction_y = "DOWN"
-
+                air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                    posX, posY)
                 # send to arduino (direction_x, direction_y)
 
         elif gym_detect(image, results.pose_landmarks, detect_times):
@@ -111,18 +110,25 @@ while cap.isOpened():
             if mode != "gym":
                 print("gym mode")
                 mode = "gym"
+                posX, posY = get_body(results.pos_landmarks)
+                air_conditioner_direction = calculate_air_conditioner_direction(
+                    posX, posY)
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times))
 
         elif study_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = time.time()
             if mode != "study":
+                air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                    posX, posY)
                 print("study mode")
                 mode = "study"
 
         else:
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
+                    air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                        posX, posY)
                     print("normal mode")
                     mode = "normal"
                 # print("normal")
