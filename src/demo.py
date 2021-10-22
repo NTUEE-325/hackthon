@@ -108,7 +108,6 @@ while cap.isOpened():
                 posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
-                print("air_conditioner_direction:", air_conditioner_direction)
                 # send to arduino (direction_x, direction_y)
             else:
                 quilt_cover = False
@@ -122,7 +121,6 @@ while cap.isOpened():
                 posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction(
                     posX, posY)
-                print("air_conditioner_direction:", air_conditioner_direction)
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times))
 
@@ -143,7 +141,6 @@ while cap.isOpened():
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
                 print("study mode")
-                print("air_conditioner_direction:", air_conditioner_direction)
                 mode = "study"
             if mode == "study":
                 posX, posY = get_body(results.pose_landmarks)
@@ -157,8 +154,6 @@ while cap.isOpened():
                     air_conditioner_direction = (
                         calculate_air_conditioner_direction_inverse(posX, posY))
                     print("normal mode")
-                    print("air_conditioner_direction:",
-                          air_conditioner_direction)
                     mode = "normal"
                 if mode == "normal":
                     posX, posY = get_body(results.pose_landmarks)
