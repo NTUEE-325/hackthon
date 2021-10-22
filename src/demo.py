@@ -116,7 +116,7 @@ while cap.isOpened():
             # send signal
             last_time = time.time()
 
-            #print("gym:", gym_detect(image, results.pose_landmarks, detect_times))
+            print("gym:", gym_detect(image, results.pose_landmarks, detect_times))
 
         elif study_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = time.time()
