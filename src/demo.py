@@ -17,12 +17,6 @@ objectron = mp_objectron.Objectron(static_image_mode=False,
                                    min_tracking_confidence=0.99,
                                    model_name='Chair')
 
-objectron2 = mp_objectron.Objectron(static_image_mode=False,
-                                    max_num_objects=1,
-                                    min_detection_confidence=0.5,
-                                    min_tracking_confidence=0.99,
-                                    model_name='Cup')
-
 detect_times = [time.time(), 0, time.time(), 0]
 
 pose = mp_pose.Pose(
@@ -57,7 +51,7 @@ while cap.isOpened():
 
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
+    image = cv2.flip(image, 1)
     results = pose.process(image)
 
     # Draw the pose annotation on the image.
@@ -69,18 +63,18 @@ while cap.isOpened():
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
     # Flip the image horizontally for a selfie-view display.
-    image = cv2.flip(image, 1)
+    
 
     if results.pose_landmarks:
-        text = str(results.pose_landmarks.landmark[0].x)
-        cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
-                    1, (0, 255, 255), 1, cv2.LINE_AA)
-        text2 = str(results.pose_landmarks.landmark[0].y)
-        cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
-                    1, (0, 255, 255), 1, cv2.LINE_AA)
+        #text = str(results.pose_landmarks.landmark[0].x)
+        #cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
+        #            1, (0, 255, 255), 1, cv2.LINE_AA)
+        #text2 = str(results.pose_landmarks.landmark[0].y)
+        #cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
+        #            1, (0, 255, 255), 1, cv2.LINE_AA)
 
         # deal with gym
-
+        #print(get_body(results.pose_landmarks))
         # if observe gym pose
         # enter gym mode
 
@@ -141,9 +135,15 @@ while cap.isOpened():
                     image, detected_object.landmarks_2d, mp_objectron.BOX_CONNECTIONS)
                 mp_drawing.draw_axis(image, detected_object.rotation,
                                      detected_object.translation)
-                chair_pos = detected_object.landmarks_2d.landmark
+                chair_pos = detected_object.landmarks_2d.landmark[0]
+                text = str(chair_pos.x)
+                cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
+                            1, (0, 255, 255), 1, cv2.LINE_AA)
+                text2 = str(chair_pos.y)
+                cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
+                            1, (0, 255, 255), 1, cv2.LINE_AA)
                 chair_size = detected_object.scale
-                print(chair_pos, chair_size)
+                
 
     #text3 = 'fps:' + str(fps)
     # cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
