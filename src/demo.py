@@ -4,6 +4,9 @@ import numpy as np
 import time
 from gym import *
 from utility import *
+import os
+if os.path.exists("../data/SleepHistory.txt"):
+    os.remove("../data/SleepHistory.txt")
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -18,7 +21,7 @@ objectron = mp_objectron.Objectron(static_image_mode=False,
                                    model_name='Chair')
 
 # detect for the gym mode
-detect_times = [time.time(), 0, time.time(), 0]
+detect_times = [time.time(), 0, time.time(), 0, 0]
 
 pose = mp_pose.Pose(
     min_detection_confidence=0.5,
@@ -48,6 +51,8 @@ if want to have "opposite direction":
 this is implemented in utility.py.
 '''
 air_conditioner_strength = 0  # strength of the air conditioner
+
+sleepHistory = open("../data/SleepHistory.txt", 'x')
 
 while cap.isOpened():
     cur_time = time.time()
@@ -98,14 +103,22 @@ while cap.isOpened():
                 mode = "night"
 
             # detect if the quilt cover the body
-
+            quilt_cover = False
             if results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8:
                 # send signal
+                if not quilt_cover:
+                    sleepHistory = open("../data/SleepHistory.txt", "a")
+                    sleepHistory.write(time.time())
+                    sleepHistory.close()
+                    quilt_cover = True
+
                 posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
                 print("air_conditioner_direction:", air_conditioner_direction)
                 # send to arduino (direction_x, direction_y)
+            else:
+                quilt_cover = False
 
         elif gym_detect(image, results.pose_landmarks, detect_times):
             # send signal
@@ -119,6 +132,12 @@ while cap.isOpened():
                 print("air_conditioner_direction:", air_conditioner_direction)
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times))
+
+                sleepHistory = open("../data/SleepHistory.txt", "a")
+                sleepHistory.write(
+                    str(time.asctime(time.localtime(time.time())))+'\n')
+                sleepHistory.close()
+
             if mode == "gym":
                 posX, posY = get_body(results.pose_landmarks)
                 air_conditioner_direction = calculate_air_conditioner_direction(

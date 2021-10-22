@@ -113,9 +113,11 @@ def classifyPose(landmarks, landmarks_visibility):
         if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
             label = 'hands-down'
 
-        if (left_elbow_angle < 90 or right_elbow_angle < 90) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
+        if (left_elbow_angle < 70 or right_elbow_angle < 70) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
             label = 'hands-curl'
 
+        if (left_elbow_angle < 70 and right_elbow_angle < 70) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
+            label = 'hands-double-curl'
     return label
 
 
@@ -125,6 +127,7 @@ def gym_detect(image, results_pose_landmarks, detect_times):
     # [1]: detect hands-down
     # [2]: detect push-up-up
     # [3]: detect push-up-down
+    # [4]: detect hands-double-curl: the mode dumbbell should start by the curl with both hands pose
 
     # unnormalized
 
@@ -145,9 +148,11 @@ def gym_detect(image, results_pose_landmarks, detect_times):
             detect_times[0] = time.time()
         if(label == "hands-down"):
             detect_times[1] = time.time()
-        if(abs(detect_times[0]-detect_times[1]) < 5):
+        if(label == "hands-double-curl"):
+            detect_times[4] = time.time()
+        if(abs(detect_times[4]-detect_times[1]) < 5):
             dumbbell = True
-        if(time.time()-detect_times[0] > 5 or time.time()-detect_times[1] > 5):
+        if(time.time()-detect_times[0] > 5 or time.time()-detect_times[1] > 5 or time.time()-detect_times[4] > 5):
             dumbbell = False
 
         label = classifyPose(landmarks, landmarks_visibility)
