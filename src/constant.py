@@ -30,7 +30,7 @@ air_conditioner_strength = 0.5
 # when setting the real air conditioner strength, the strength is mapped to 1~5(int):
 # floor(air_conditioner_strength*5)+1
 
-STUDY_MODE_BASE_STRENGTH = 0.5
+STUDY_MODE_BASE_STRENGTH = 0.1
 NORMAL_MODE_BASE_STRENGTH = 0.5
 GYM_MODE_BASE_STRENGTH = 1.0
 QUILT_COVER_MODE_BASE_STRENGTH = 0.3
