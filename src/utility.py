@@ -72,7 +72,7 @@ def record_dangerous_sleeping():
     sleepHistory.close()
 
 
-def draw_result(background, air_conditioner_direction, mode, air_conditioner_strength):
+def draw_result(background, air_conditioner_direction, mode, air_conditioner_strength, warning):
     normalized = (
         (air_conditioner_direction[0]-0.5)**2+(air_conditioner_direction[1]-0.5)**2)**0.5
     start_pos = (int(center[0]-arrow_length*(air_conditioner_direction[0]-0.5)/normalized),
@@ -104,6 +104,9 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
         # red
         cv2.rectangle(background, left_up, right_down, color, thickness[i])
 
+    if warning:
+        cv2.rectangle(background, (500, 200), (600,250), (0,0,255), -1)
+
     text = str(mode)
     font = cv2.FONT_HERSHEY_SIMPLEX
     thickness = cv2.LINE_AA
@@ -111,3 +114,4 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
     # print(text_size)
     cv2.putText(background, text, (230-int((text_size[0])/2), 280),
                 font, 3, (0, 0, 0), 1, thickness)
+

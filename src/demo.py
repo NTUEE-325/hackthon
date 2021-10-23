@@ -43,6 +43,7 @@ while cap.isOpened():
     # To improve performance, optionally mark the image as not writeable to
     # pass by reference.
 
+    warning = False
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     # image = cv2.flip(image, 1)
@@ -94,14 +95,14 @@ while cap.isOpened():
 
                 air_conditioner_strength = QUILT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[QUILT_COVER_FALSE_INDEX])/air_conditioner_strength_time_constant)
-
+                warning = True
                 # send to arduino (direction_x, direction_y)
             else:  # cover
                 if not quilt_cover:
                     time_record[QUILT_COVER_TRUE_INDEX] = cur_time
                     init_strength = air_conditioner_strength
-                    print(init_strength)
-                print(init_strength)
+                    #print(init_strength)
+                #print(init_strength)
                 air_conditioner_strength = QUILT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[QUILT_COVER_TRUE_INDEX])/air_conditioner_strength_time_constant)
 
@@ -210,9 +211,9 @@ while cap.isOpened():
     cv2.imshow('MediaPipe Pose', image)
 
     background = cv2.imread("./img/background.jpg")
-    print(air_conditioner_strength)
+    #print(air_conditioner_strength)
     draw_result(background, air_conditioner_direction, mode,
-                math.floor(air_conditioner_strength*5)+1)
+                math.floor(air_conditioner_strength*5)+1, warning)
 
     cv2.imshow('result', background)
     if cv2.waitKey(5) & 0xFF == 27:
