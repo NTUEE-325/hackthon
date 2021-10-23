@@ -1,13 +1,9 @@
 import cv2
-import mediapipe as mp
 import numpy as np
 from gym import *
 from utility import *
 from constant import *
 # from controller import *
-import os
-if os.path.exists("./data/SleepHistory.txt"):
-    os.remove("./data/SleepHistory.txt")
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -25,13 +21,13 @@ pose = mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5)
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
+init()
 
-sleepHistory = open("./data/SleepHistory.txt", 'x')
 
 while cap.isOpened():
-    cur_time = time.time()
+    cur_time = time.time() 
     success, image = cap.read()
     h, w, _ = image.shape
 
@@ -57,15 +53,13 @@ while cap.isOpened():
         results.pose_landmarks,
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-    # Flip the image horizontally for a selfie-view display.
-    if cur_time-last_detect_chair_time > buffer_time and (mode != "study"):
+
+    if cur_time-last_detect_chair_time > buffer_time and (mode != "study"): #clear not in picture chair
         chair_pos = 0
         chair_size = 0
+
     if results.pose_landmarks:
 
-        # deal with gym
-        # if observe gym pose
-        # enter gym mode
         posX, posY = get_body(results.pose_landmarks)
 
         if night_detect(image):
@@ -85,7 +79,6 @@ while cap.isOpened():
             if (results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8) or (
                     results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].visibility > 0.8):
                 # no cover
-                # send signal
                 if quilt_cover:
                     record_dangerous_sleeping()
                     quilt_cover = False
@@ -96,13 +89,11 @@ while cap.isOpened():
                 air_conditioner_strength = QUILT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[QUILT_COVER_FALSE_INDEX])/air_conditioner_strength_time_constant)
                 warning = True
-                # send to arduino (direction_x, direction_y)
             else:  # cover
                 if not quilt_cover:
                     time_record[QUILT_COVER_TRUE_INDEX] = cur_time
                     init_strength = air_conditioner_strength
-                    # print(init_strength)
-                # print(init_strength)
+                   
                 air_conditioner_strength = QUILT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[QUILT_COVER_TRUE_INDEX])/air_conditioner_strength_time_constant)
 
@@ -112,7 +103,6 @@ while cap.isOpened():
                 posX, posY)
 
         elif gym_detect(image, results.pose_landmarks, detect_times, mode):
-            # send signal
             last_time = cur_time
             if mode != "gym":
                 time_record[GYM_INDEX] = cur_time
@@ -123,10 +113,7 @@ while cap.isOpened():
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times, mode))
 
-                '''sleepHistory = open("../data/SleepHistory.txt", "a")
-                sleepHistory.write(
-                    str(time.asctime(time.localtime(time.time())))+'\n')
-                sleepHistory.close()'''
+                
 
             air_conditioner_direction = calculate_air_conditioner_direction(
                 posX, posY)
@@ -167,9 +154,8 @@ while cap.isOpened():
                     posX, posY)
                 air_conditioner_strength = NORMAL_MODE_BASE_STRENGTH + (init_strength-NORMAL_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[NORMAL_INDEX])/air_conditioner_strength_time_constant)
-                # print("normal")
-                # send normal signal to arduino
-
+        theta_x, theta_y = air_conditioner_direction
+        #Set_Angle(theta_x, theta_y)
     else:
         results2 = objectron.process(image)
 
@@ -193,17 +179,8 @@ while cap.isOpened():
                 mp_drawing.draw_axis(image, detected_object.rotation,
                                      detected_object.translation)
                 chair_pos = detected_object.landmarks_2d.landmark[0]
-                text = str(chair_pos.x)
-                cv2.putText(image, text, (100, 50), cv2.FONT_HERSHEY_SIMPLEX,
-                            1, (0, 255, 255), 1, cv2.LINE_AA)
-                text2 = str(chair_pos.y)
-                cv2.putText(image, text2, (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
-                            1, (0, 255, 255), 1, cv2.LINE_AA)
+                
                 chair_size = detected_object.scale
-
-    # text3 = 'fps:' + str(fps)
-    # cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
-    # 1, (0, 255, 255), 1, cv2.LINE_AA)
 
     cv2.circle(
         image, (int(air_conditioner_direction[0]*w), int(air_conditioner_direction[1]*h)), 15, (255, 0, 0), -1)
@@ -216,7 +193,6 @@ while cap.isOpened():
     cv2.imshow('MediaPipe Pose', image)
 
     background = cv2.imread("./img/background.jpg")
-    # print(air_conditioner_strength)
     draw_result(background, air_conditioner_direction, mode,
                 math.floor(air_conditioner_strength*5)+1, warning)
 

@@ -4,12 +4,19 @@ import math
 import time
 mp_pose = mp.solutions.pose
 
-LIGHT_THRESHOLD = 100
+LIGHT_THRESHOLD = 150
 OBSERVE_DISTANCE_TO_IMAGE = 0.5
 arrow_length = 100
 center = (600, 350)
 # calculate the fan's angle according to the positions
 # obtained from the demo.py.
+
+
+import os
+def init():
+    if os.path.exists("./data/SleepHistory.txt"):
+        os.remove("./data/SleepHistory.txt")
+    sleepHistory = open("./data/SleepHistory.txt", 'x')
 
 
 def get_fan_angle(posX, posY):
