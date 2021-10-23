@@ -3,7 +3,7 @@ import numpy as np
 from gym import *
 from utility import *
 from constant import *
-# from controller import *
+from controller import *
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -21,18 +21,17 @@ pose = mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5)
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 init()
 
 
-cnt = 0
+frame = 0
 while cap.isOpened():
-    cnt += 1
     cur_time = time.time()
     success, image = cap.read()
     h, w, _ = image.shape
-
+    frame += 1
     if not success:
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
@@ -155,8 +154,10 @@ while cap.isOpened():
                     posX, posY)
                 air_conditioner_strength = NORMAL_MODE_BASE_STRENGTH + (init_strength-NORMAL_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[NORMAL_INDEX])/air_conditioner_strength_time_constant)
-        theta_x, theta_y = air_conditioner_direction
-        #Set_Angle(theta_x, theta_y)
+        theta_x, theta_y = get_fan_angle(
+            air_conditioner_direction[0], air_conditioner_direction[1])
+        if frame % 40 == 0:
+            Set_Angle(theta_x, theta_y)
     else:
         results2 = objectron.process(image)
 
@@ -198,8 +199,6 @@ while cap.isOpened():
                 math.floor(air_conditioner_strength*5)+1, warning)
 
     cv2.imshow('result', background)
-    if cnt > 250:
-        break
     if cv2.waitKey(5) & 0xFF == 27:
         break
 cap.release()

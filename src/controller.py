@@ -61,7 +61,7 @@ def write(msgWrite):
 
 
 last_strength = 3  # record the last strength change [use in SetStrength()]
-bt = bluetooth("COM6")
+bt = bluetooth("COM5")
 while not bt.is_open():
     pass
 print("BT Connected!")
@@ -86,7 +86,7 @@ def SetMode(mode):
     pass
 
 
-def SetAngle(x, y):
+def Set_Angle(x, y):
     # x is the horizontal angle, y is the vertical angle
     hor_angle = ""
     ver_angle = ""

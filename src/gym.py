@@ -101,7 +101,8 @@ def classifyPose(landmarks, landmarks_visibility):
 
     enable_detection_pushup = ((landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value] > threshold) or (
         landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value] > threshold)) and (
-        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_HIP.value] > threshold or landmarks_visibility[mp_pose.PoseLandmark.LEFT_HIP.value] > threshold) and (body_slope < 1)
+        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_HIP.value] > threshold or landmarks_visibility[mp_pose.PoseLandmark.LEFT_HIP.value] > threshold) and (
+        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_KNEE.value] > 0.5 or landmarks_visibility[mp_pose.PoseLandmark.LEFT_KNEE.value] > 0.5) and (body_slope < 1)
    # (
     #    landmarks_visibility[mp_pose.PoseLandmark.RIGHT_KNEE.value] > threshold or landmarks_visibility[mp_pose.PoseLandmark.LEFT_KNEE.value] > threshold)
     #print("1:", landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value])
@@ -116,14 +117,12 @@ def classifyPose(landmarks, landmarks_visibility):
             if left_knee_angle > 135 or right_knee_angle > 135:
                 if left_hip_angle > 135 or right_hip_angle > 135:
                     label = 'push-up-down'
-                    print(label)
 
         # push up clssifier
         if left_elbow_angle > 150 and right_elbow_angle > 150:
             if left_knee_angle > 135 and right_knee_angle > 135:
                 if left_hip_angle > 135 and right_hip_angle > 135:
                     label = 'push-up-up'
-                    print(label)
 
     if enable_detection_dumbbell:
         if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
@@ -171,7 +170,6 @@ def gym_detect(image, results_pose_landmarks, detect_times, current_mode):
             detect_times[4] = time.time()
         if current_mode != "gym":
             if(abs(detect_times[4]-detect_times[1]) < 4) and time.time()-detect_times[4] < 4:
-                print(abs(detect_times[4]-detect_times[1]))
                 dumbbell = True
         else:
             if(time.time()-detect_times[0] < 10 or time.time()-detect_times[4] < 10):
