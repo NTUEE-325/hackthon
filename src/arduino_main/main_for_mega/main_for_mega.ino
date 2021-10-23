@@ -191,6 +191,14 @@ void setup()
 }
 
 void loop() {
+  /*steps1 = 6500;
+  if (stepper1.currentPosition() != steps1){
+      Motor_RL(steps1);
+  }
+  steps2 = 10000;
+  if (stepper2.currentPosition() != steps2){
+    Motor_UD(steps2);
+  }*/
   MODE mode = GETMODE();
   if (mode == DEFAULT_MODE){
     lcd.setCursor(0,0);

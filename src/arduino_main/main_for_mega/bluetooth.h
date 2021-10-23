@@ -2,8 +2,8 @@
 #define BLUETOOTH.H
 
 #include <SoftwareSerial.h>
-#define TX_PIN 3 
-#define RX_PIN 2 
+#define TX_PIN 52 
+#define RX_PIN 53 
 SoftwareSerial BT(RX_PIN , TX_PIN);
 
 char message;
