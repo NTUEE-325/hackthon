@@ -101,8 +101,8 @@ while cap.isOpened():
                 if not quilt_cover:
                     time_record[QUILT_COVER_TRUE_INDEX] = cur_time
                     init_strength = air_conditioner_strength
-                    #print(init_strength)
-                #print(init_strength)
+                    # print(init_strength)
+                # print(init_strength)
                 air_conditioner_strength = QUILT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[QUILT_COVER_TRUE_INDEX])/air_conditioner_strength_time_constant)
 
@@ -145,8 +145,13 @@ while cap.isOpened():
 
             air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                 posX, posY)
-            air_conditioner_strength = STUDY_MODE_BASE_STRENGTH + (init_strength-STUDY_MODE_BASE_STRENGTH)*math.exp(-(
-                cur_time-time_record[STUDY_INDEX])/air_conditioner_strength_time_constant)
+
+            if cur_time-time_record[STUDY_INDEX] < 10:
+                air_conditioner_strength = init_strength + \
+                    (cur_time-time_record[STUDY_INDEX])*(0.8-init_strength)/10
+            else:
+                air_conditioner_strength = 0.8+(STUDY_MODE_BASE_STRENGTH-0.8)*(1-math.exp(-(
+                    cur_time-time_record[STUDY_INDEX]-10)/air_conditioner_strength_time_constant))
 
         else:
             if cur_time-last_time > buffer_time:
@@ -211,7 +216,7 @@ while cap.isOpened():
     cv2.imshow('MediaPipe Pose', image)
 
     background = cv2.imread("./img/background.jpg")
-    #print(air_conditioner_strength)
+    # print(air_conditioner_strength)
     draw_result(background, air_conditioner_direction, mode,
                 math.floor(air_conditioner_strength*5)+1, warning)
 
