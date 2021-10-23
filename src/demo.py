@@ -4,7 +4,7 @@ import numpy as np
 import time
 from gym import *
 from utility import *
-#from controller import *
+# from controller import *
 import os
 if os.path.exists("./data/SleepHistory.txt"):
     os.remove("./data/SleepHistory.txt")
@@ -36,17 +36,34 @@ buffer_time = 5
 chair_pos = 0
 chair_size = 0
 # detect for the gym mode
-detect_times = [time.time(), 0, time.time(), 0, 0]
+detect_times = [time.time()-11, 0, time.time(), 0, time.time()-11]
 
 time_record = [0, 0, 0, 0, 0]
-# time_record records the ongoing time for each mode. only one of them is nonzero.
+# time_record records the starting time for each mode. only one of them is nonzero.
 # indices: [quilt_cover_true, quilt_cover_false, gym, normal, study]
+GYM_INDEX = 2
+NORMAL_INDEX = 3
+STUDY_INDEX = 4
+QUILT_COVER_FALSE_INDEX = 1
+QUILT_COVER_TRUE_INDEX = 0
+
+init_strength = 0.5
+# init strength to give the current strength
+
 air_conditioner_strength_time_constant = 100
 # time constant for the adjustment of air conditioner strength (exponential interpolation)
-air_conditioner_strength = 0
+
+air_conditioner_strength = 0.5
 # strength of the air conditioner
 # when setting the real air conditioner strength, the strength is mapped to 1~5(int):
 # floor(air_conditioner_strength*5)+1
+
+STUDY_MODE_BASE_STRENGTH = 0.5
+NORMAL_MODE_BASE_STRENGTH = 0.5
+GYM_MODE_BASE_STRENGTH = 1.0
+QUILT_COVER_MODE_BASE_STRENGTH = 0.5
+QUILT_NOT_COVER_MODE_BASE_STRENGTH = 0.0
+# final strength of each mode
 
 center = (600, 300)
 # direction of the wind: initially at the center
@@ -60,15 +77,13 @@ if want to have "opposite direction":
 this is implemented in utility.py.
 '''
 
-
 sleepHistory = open("./data/SleepHistory.txt", 'x')
-
 
 while cap.isOpened():
     cur_time = time.time()
     success, image = cap.read()
     h, w, _ = image.shape
-    #print(h, w)
+
     if not success:
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
@@ -106,33 +121,50 @@ while cap.isOpened():
             last_time = time.time()
 
             if mode != "night":
+
                 print("night mode")
                 mode = "night"
-                SetMode("night")
+                # SetMode("night")
 
             # detect if the quilt cover the body
-            quilt_cover = False
-            if results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8:
+            quilt_cover = True
+            if results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].visibility > 0.8 or results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].visibility > 0.8:
                 # send signal
-                if not quilt_cover:
+                if quilt_cover:
                     record_dangerous_sleeping()
-                    quilt_cover = True
+                    quilt_cover = False
 
-                air_conditioner_direction = calculate_air_conditioner_direction_inverse(
-                    posX, posY)
+                    time_record = np.zeros(5)
+                    time_record[QUILT_COVER_FALSE_INDEX] = time.time()
+                    init_strength = air_conditioner_strength
+
+                air_conditioner_strength = QUILT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
+                    time.time()-time_record[QUILT_COVER_FALSE_INDEX])/air_conditioner_strength_time_constant)
+
                 # send to arduino (direction_x, direction_y)
             else:
-                quilt_cover = False
+                if quilt_cover:
+                    time_record = np.zeros(5)
+                    time_record[QUILT_COVER_TRUE_INDEX] = time.time()
+                    init_strength = air_conditioner_strength
+
+                    air_conditioner_strength = QUILT_NOT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_NOT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
+                        time.time()-time_record[QUILT_COVER_FALSE_INDEX])/air_conditioner_strength_time_constant)
+                quilt_cover = True
+
+            air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                posX, posY)
 
         elif gym_detect(image, results.pose_landmarks, detect_times):
             # send signal
             last_time = time.time()
             if mode != "gym":
+                time_record = np.zeros(5)
+                time_record[GYM_INDEX] = time.time()
+                init_strength = air_conditioner_strength
                 print("gym mode")
                 mode = "gym"
                 # SetMode("gym")
-                air_conditioner_direction = calculate_air_conditioner_direction(
-                    posX, posY)
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times))
 
@@ -141,33 +173,41 @@ while cap.isOpened():
                     str(time.asctime(time.localtime(time.time())))+'\n')
                 sleepHistory.close()'''
 
-            else:
-                air_conditioner_direction = calculate_air_conditioner_direction(
-                    posX, posY)
+            air_conditioner_direction = calculate_air_conditioner_direction(
+                posX, posY)
+            air_conditioner_strength = GYM_MODE_BASE_STRENGTH + (init_strength-GYM_MODE_BASE_STRENGTH)*math.exp(-(
+                time.time()-time_record[GYM_INDEX])/air_conditioner_strength_time_constant)
 
         elif study_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = time.time()
             if mode != "study":
-                air_conditioner_direction = calculate_air_conditioner_direction_inverse(
-                    posX, posY)
                 print("study mode")
                 # SetMode("study")
                 mode = "study"
-            if mode == "study":
-                air_conditioner_direction = calculate_air_conditioner_direction_inverse(
-                    posX, posY)
+
+                time_record = np.zeros(5)
+                time_record[STUDY_INDEX] = time.time()
+                init_strength = air_conditioner_strength
+
+            air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                posX, posY)
+            air_conditioner_strength = STUDY_MODE_BASE_STRENGTH + (init_strength-STUDY_MODE_BASE_STRENGTH)*math.exp(-(
+                time.time()-time_record[STUDY_INDEX])/air_conditioner_strength_time_constant)
 
         else:
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
                     # SetMode("normal")
-                    air_conditioner_direction = (
-                        calculate_air_conditioner_direction_inverse(posX, posY))
                     print("normal mode")
                     mode = "normal"
-                else:
-                    air_conditioner_direction = calculate_air_conditioner_direction_inverse(
-                        posX, posY)
+                    time_record = np.zeros(5)
+                    time_record[NORMAL_INDEX] = time.time()
+                    init_strength = air_conditioner_strength
+
+                air_conditioner_direction = calculate_air_conditioner_direction_inverse(
+                    posX, posY)
+                air_conditioner_strength = NORMAL_MODE_BASE_STRENGTH + (init_strength-NORMAL_MODE_BASE_STRENGTH)*math.exp(-(
+                    time.time()-time_record[NORMAL_INDEX])/air_conditioner_strength_time_constant)
                 # print("normal")
                 # send normal signal to arduino
 
@@ -176,9 +216,13 @@ while cap.isOpened():
         if results2.detected_objects:
             last_detect_chair_time = time.time()
             if mode != "normal":
-                SetMode("normal")
+                # SetMode("normal")
                 print("normal mode")
                 mode = "normal"
+                time_record = np.zeros(5)
+                time_record[NORMAL_INDEX] = time.time()
+                init_strength = air_conditioner_strength
+
             for detected_object in results2.detected_objects:
                 mp_drawing.draw_landmarks(
                     image, detected_object.landmarks_2d, mp_objectron.BOX_CONNECTIONS)
@@ -193,7 +237,7 @@ while cap.isOpened():
                             1, (0, 255, 255), 1, cv2.LINE_AA)
                 chair_size = detected_object.scale
 
-    #text3 = 'fps:' + str(fps)
+    # text3 = 'fps:' + str(fps)
     # cv2.putText(image, text3, (100, 150), cv2.FONT_HERSHEY_SIMPLEX,
     # 1, (0, 255, 255), 1, cv2.LINE_AA)
 
@@ -202,8 +246,7 @@ while cap.isOpened():
     if results.pose_landmarks:
         cv2.circle(
             image, (int(get_body(results.pose_landmarks)[0]*w), int(get_body(results.pose_landmarks)[1]*h)), 15, (0, 255, 0), -1)
-        text3 = str(get_fan_angle(
-            air_conditioner_direction[0], air_conditioner_direction[1]))
+        text3 = str(air_conditioner_strength)
         cv2.putText(image, text3, (100, 150),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
     cv2.imshow('MediaPipe Pose', image)

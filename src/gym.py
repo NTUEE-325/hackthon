@@ -144,15 +144,17 @@ def gym_detect(image, results_pose_landmarks, detect_times):
 
     if landmarks:
         label = classifyPose(landmarks, landmarks_visibility)
+        dumbbell = True
+        pushups = True
         if(label == "hands-curl"):
             detect_times[0] = time.time()
         if(label == "hands-down"):
             detect_times[1] = time.time()
         if(label == "hands-double-curl"):
             detect_times[4] = time.time()
-        if(abs(detect_times[4]-detect_times[1]) < 5):
+        if(abs(detect_times[4]-detect_times[1]) < 10):
             dumbbell = True
-        if(time.time()-detect_times[0] > 5 or time.time()-detect_times[1] > 5 or time.time()-detect_times[4] > 5):
+        if(time.time()-detect_times[0] > 10 and time.time()-detect_times[4] > 10):
             dumbbell = False
 
         label = classifyPose(landmarks, landmarks_visibility)
