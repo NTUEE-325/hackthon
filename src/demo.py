@@ -25,7 +25,7 @@ pose = mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5)
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 
 mode = "init"
@@ -48,9 +48,10 @@ air_conditioner_strength = 0
 # when setting the real air conditioner strength, the strength is mapped to 1~5(int):
 # floor(air_conditioner_strength*5)+1
 
-center = (600, 300)
+center = (600, 350)
+arrow_length = 100
 # direction of the wind: initially at the center
-air_conditioner_direction = [0.5, 0.5]
+air_conditioner_direction = [0, 0]
 '''
 if want to have "opposite direction":
     1. detect the direction of people with respect to the point (0.5, 0.5)
@@ -79,7 +80,7 @@ while cap.isOpened():
 
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = cv2.flip(image, 1)
+    #image = cv2.flip(image, 1)
     results = pose.process(image)
 
     # Draw the pose annotation on the image.
@@ -108,7 +109,7 @@ while cap.isOpened():
             if mode != "night":
                 print("night mode")
                 mode = "night"
-                SetMode("night")
+                #SetMode("night")
 
             # detect if the quilt cover the body
             quilt_cover = False
@@ -176,7 +177,7 @@ while cap.isOpened():
         if results2.detected_objects:
             last_detect_chair_time = time.time()
             if mode != "normal":
-                SetMode("normal")
+                #SetMode("normal")
                 print("normal mode")
                 mode = "normal"
             for detected_object in results2.detected_objects:
@@ -211,8 +212,16 @@ while cap.isOpened():
     background = cv2.imread("./img/background.jpg")
     text = str(mode)
 
-    cv2.arrowedLine(background, center, (50, 50),
+    normalized = ((air_conditioner_direction[0]-0.5)**2+(air_conditioner_direction[1]-0.5)**2)**0.5
+    start_pos = (int(center[0]-arrow_length*(air_conditioner_direction[0]-0.5)/normalized), int(center[1]-arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
+    end_pos = (int(center[0]+arrow_length*(air_conditioner_direction[0]-0.5)/normalized), int(center[1]+arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
+    print(normalized)
+    print(air_conditioner_direction[0], air_conditioner_direction[1])
+    
+    cv2.arrowedLine(background, start_pos, end_pos,
                     (0, 0, 0), 2, tipLength=0.5)
+
+
 
     cv2.putText(background, text, (70, 280),
                 cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 0), 1, cv2.LINE_AA)

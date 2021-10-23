@@ -1,1 +1,1 @@
-detected_object
+FONT_HERSHEY_SIMPLEX
