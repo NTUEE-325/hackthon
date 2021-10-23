@@ -3,20 +3,21 @@ import time
 import sys
 import serial
 
+
 class bluetooth:
-    def __init__(self, port: str, baudrate: int=9600):
+    def __init__(self, port: str, baudrate: int = 9600):
         """ Initialize an BT object, and auto-connect it. """
         # The port name is the name shown in control panel
         # And the baudrate is the communication setting, default value of HC-05 is 9600.
         self.ser = serial.Serial(port, baudrate=baudrate)
-        
+
     def is_open(self) -> bool:
         return self.ser.is_open
 
     def waiting(self) -> bool:
         return self.ser.in_waiting
 
-    def do_connect(self, port: str, baudrate: int=9600) -> bool:
+    def do_connect(self, port: str, baudrate: int = 9600) -> bool:
         """ Connect to the specify port with particular baudrate """
         # Connection function. Disconnect the previous communication, specify a new one.
         self.disconnect()
@@ -43,40 +44,53 @@ class bluetooth:
 
         return receiveMsg
 
+
 def read():
     if bt.waiting():
         print(bt.readString())
 
+
 def write(msgWrite):
-    
+
     print(msgWrite)
-        
-    if msgWrite == "exit": sys.exit()
-    
+
+    if msgWrite == "exit":
+        sys.exit()
+
     bt.write(msgWrite + "\n")
 
+
 bt = bluetooth("COM6")
-while not bt.is_open(): pass
+while not bt.is_open():
+    pass
 print("BT Connected!")
 
 readThread = threading.Thread(target=read)
 readThread.setDaemon(True)
 readThread.start()
 
+
 def SetMode(mode):
     # modes = ["normal", "study", "night", "gym"]
-    if (mode=="normal"): write("d")
-    elif (mode=="study"): write("s")
-    elif (mode=="night"): write("n")
-    elif (mode=="gym"): write("g")
-    else: write("_")
+    if (mode == "normal"):
+        write("d")
+    elif (mode == "study"):
+        write("s")
+    elif (mode == "night"):
+        write("n")
+    elif (mode == "gym"):
+        write("g")
+    else:
+        write("_")
     pass
+
 
 def SetAngle(x, y):
     # x is horizontal, y is vertical
     pass
 
-def SetStrength(n):  #為加強or減弱
-    # range from 1~
-    pass
 
+def SetStrength(n):  # 為加強or減弱
+    # range from 1~
+
+    pass
