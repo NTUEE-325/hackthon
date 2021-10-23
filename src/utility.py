@@ -84,10 +84,16 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
     color = (0, 0, 255)
     for i in range(air_conditioner_strength):
         thickness[i] = -1
-    if air_conditioner_strength < 3:
+    if air_conditioner_strength == 1:
         color = (0, 255, 0)
-    elif air_conditioner_strength < 5:
-        color = (0, 255, 255)
+    elif air_conditioner_strength == 2:
+        color = (34,139,34)
+    elif air_conditioner_strength == 3:
+        color = (0,255,255)
+    elif air_conditioner_strength == 4:
+        color = (0,165,255)
+    elif air_conditioner_strength == 5:
+        color = (0,0,255)
 
     cv2.arrowedLine(background, start_pos, end_pos,
                     (0, 0, 0), 2, tipLength=0.5)
