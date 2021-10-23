@@ -2,6 +2,8 @@ import cv2
 import mediapipe as mp
 import math
 import time
+import os
+
 mp_pose = mp.solutions.pose
 
 LIGHT_THRESHOLD = 150
@@ -12,7 +14,6 @@ center = (600, 350)
 # obtained from the demo.py.
 
 
-import os
 def init():
     if os.path.exists("./data/SleepHistory.txt"):
         os.remove("./data/SleepHistory.txt")
