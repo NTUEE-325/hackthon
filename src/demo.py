@@ -21,13 +21,15 @@ pose = mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5)
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 init()
 
 
+cnt = 0
 while cap.isOpened():
-    cur_time = time.time() 
+    cnt += 1
+    cur_time = time.time()
     success, image = cap.read()
     h, w, _ = image.shape
 
@@ -54,7 +56,8 @@ while cap.isOpened():
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 
-    if cur_time-last_detect_chair_time > buffer_time and (mode != "study"): #clear not in picture chair
+    # clear not in picture chair
+    if cur_time-last_detect_chair_time > buffer_time and (mode != "study"):
         chair_pos = 0
         chair_size = 0
 
@@ -93,7 +96,7 @@ while cap.isOpened():
                 if not quilt_cover:
                     time_record[QUILT_COVER_TRUE_INDEX] = cur_time
                     init_strength = air_conditioner_strength
-                   
+
                 air_conditioner_strength = QUILT_COVER_MODE_BASE_STRENGTH + (init_strength-QUILT_COVER_MODE_BASE_STRENGTH)*math.exp(-(
                     cur_time-time_record[QUILT_COVER_TRUE_INDEX])/air_conditioner_strength_time_constant)
 
@@ -112,8 +115,6 @@ while cap.isOpened():
                 # SetMode("gym")
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times, mode))
-
-                
 
             air_conditioner_direction = calculate_air_conditioner_direction(
                 posX, posY)
@@ -179,7 +180,7 @@ while cap.isOpened():
                 mp_drawing.draw_axis(image, detected_object.rotation,
                                      detected_object.translation)
                 chair_pos = detected_object.landmarks_2d.landmark[0]
-                
+
                 chair_size = detected_object.scale
 
     cv2.circle(
@@ -197,6 +198,8 @@ while cap.isOpened():
                 math.floor(air_conditioner_strength*5)+1, warning)
 
     cv2.imshow('result', background)
+    if cnt > 250:
+        break
     if cv2.waitKey(5) & 0xFF == 27:
         break
 cap.release()

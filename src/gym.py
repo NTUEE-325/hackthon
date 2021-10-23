@@ -89,34 +89,41 @@ def classifyPose(landmarks, landmarks_visibility):
                                      landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value])
     # first check whether the body is in the scope.
 
-    threshold = 0.95
-    if (landmarks[mp_pose.PoseLandmark.RIGHT_HIP][0] -landmarks[mp_pose.PoseLandmark.NOSE][0])==0:
+    threshold = 0.9
+    if (landmarks[mp_pose.PoseLandmark.RIGHT_HIP][0] - landmarks[mp_pose.PoseLandmark.NOSE][0]) == 0:
         body_slope = 100
     else:
         body_slope = abs(landmarks[mp_pose.PoseLandmark.RIGHT_HIP][1] -
-                        landmarks[mp_pose.PoseLandmark.NOSE][1])/(landmarks[mp_pose.PoseLandmark.RIGHT_HIP][0] -
-                                                                landmarks[mp_pose.PoseLandmark.NOSE][0])
+                         landmarks[mp_pose.PoseLandmark.NOSE][1])/(landmarks[mp_pose.PoseLandmark.RIGHT_HIP][0] -
+                                                                   landmarks[mp_pose.PoseLandmark.NOSE][0])
     enable_detection_dumbbell = (landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value] > threshold) or (
         landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value] > threshold)
-    enable_detection_pushup = (landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value] > threshold) or (
-        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value] > threshold) and (
-        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_HIP.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_HIP.value] > threshold) and (
-        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_KNEE.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_KNEE.value] > threshold) and (body_slope < 1)
 
+    enable_detection_pushup = ((landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value] > threshold) or (
+        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value] > threshold)) and (
+        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_HIP.value] > threshold or landmarks_visibility[mp_pose.PoseLandmark.LEFT_HIP.value] > threshold) and (body_slope < 1)
+   # (
+    #    landmarks_visibility[mp_pose.PoseLandmark.RIGHT_KNEE.value] > threshold or landmarks_visibility[mp_pose.PoseLandmark.LEFT_KNEE.value] > threshold)
+    #print("1:", landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value])
+    #print("2:", landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value])
+    # print(
+    #    "3:", landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value])
+    #print("4:", landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value])
+    #print("5:", body_slope < 1)
     if enable_detection_pushup:
-        #print("enabled")
-        if left_elbow_angle < 90 and right_elbow_angle < 90:
-            if left_shoulder_angle < 40 and right_shoulder_angle < 40:
-                if left_knee_angle > 145 and right_knee_angle > 145:
-                    if left_hip_angle > 145 and right_hip_angle > 145:
-                        label = 'push-up-down'
+        print("enabled")
+        if left_elbow_angle < 90 or right_elbow_angle < 90:
+            if left_knee_angle > 135 or right_knee_angle > 135:
+                if left_hip_angle > 135 or right_hip_angle > 135:
+                    label = 'push-up-down'
+                    print(label)
 
-        #push up clssifier
+        # push up clssifier
         if left_elbow_angle > 150 and right_elbow_angle > 150:
-            if left_shoulder_angle > 70 and right_shoulder_angle > 70:
-                if left_knee_angle > 155 and right_knee_angle > 155:
-                    if left_hip_angle > 135 and right_hip_angle > 135:
-                        label = 'push-up-up'
+            if left_knee_angle > 135 and right_knee_angle > 135:
+                if left_hip_angle > 135 and right_hip_angle > 135:
+                    label = 'push-up-up'
+                    print(label)
 
     if enable_detection_dumbbell:
         if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
@@ -169,7 +176,7 @@ def gym_detect(image, results_pose_landmarks, detect_times, current_mode):
         else:
             if(time.time()-detect_times[0] < 10 or time.time()-detect_times[4] < 10):
                 dumbbell = True
-        #print(label)
+        # print(label)
         if(label == "push-up-up"):
             detect_times[2] = time.time()
         if(label == "push-up-down"):
