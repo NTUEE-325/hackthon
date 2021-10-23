@@ -110,7 +110,7 @@ while cap.isOpened():
             air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                 posX, posY)
 
-        elif gym_detect(image, results.pose_landmarks, detect_times):
+        elif gym_detect(image, results.pose_landmarks, detect_times, mode):
             # send signal
             last_time = cur_time
             if mode != "gym":
@@ -120,7 +120,7 @@ while cap.isOpened():
                 mode = "gym"
                 # SetMode("gym")
                 print("gym:", gym_detect(
-                    image, results.pose_landmarks, detect_times))
+                    image, results.pose_landmarks, detect_times, mode))
 
                 '''sleepHistory = open("../data/SleepHistory.txt", "a")
                 sleepHistory.write(
@@ -166,15 +166,20 @@ while cap.isOpened():
 
     else:
         results2 = objectron.process(image)
+
+        if mode != "normal" and cur_time-last_time > buffer_time:
+            # SetMode("normal")
+            print("normal mode")
+            mode = "normal"
+            time_record[NORMAL_INDEX] = cur_time
+            init_strength = air_conditioner_strength
+
+        if mode == "normal":
+            air_conditioner_strength = NORMAL_MODE_BASE_STRENGTH + (init_strength-NORMAL_MODE_BASE_STRENGTH)*math.exp(-(
+                cur_time-time_record[NORMAL_INDEX])/air_conditioner_strength_time_constant)
+
         if results2.detected_objects:
-            last_detect_chair_time = time.time()
-            if mode != "normal":
-                # SetMode("normal")
-                print("normal mode")
-                mode = "normal"
-                time_record = np.zeros(5)
-                time_record[NORMAL_INDEX] = time.time()
-                init_strength = air_conditioner_strength
+            last_detect_chair_time = cur_time
 
             for detected_object in results2.detected_objects:
                 mp_drawing.draw_landmarks(
@@ -201,11 +206,11 @@ while cap.isOpened():
             image, (int(get_body(results.pose_landmarks)[0]*w), int(get_body(results.pose_landmarks)[1]*h)), 15, (0, 255, 0), -1)
         text3 = str(air_conditioner_strength)
         cv2.putText(image, text3, (100, 150),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 1, cv2.LINE_AA)
     cv2.imshow('MediaPipe Pose', image)
 
     background = cv2.imread("./img/background.jpg")
-
+    print(air_conditioner_strength)
     draw_result(background, air_conditioner_direction, mode,
                 math.floor(air_conditioner_strength*5)+1)
 
