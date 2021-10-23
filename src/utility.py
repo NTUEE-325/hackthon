@@ -6,7 +6,7 @@ import os
 
 mp_pose = mp.solutions.pose
 
-LIGHT_THRESHOLD = 150
+LIGHT_THRESHOLD = 100
 OBSERVE_DISTANCE_TO_IMAGE = 0.5
 arrow_length = 100
 center = (600, 350)
@@ -14,7 +14,7 @@ center = (600, 350)
 # obtained from the demo.py.
 
 
-def init():
+def init(): 
     if os.path.exists("./data/SleepHistory.txt"):
         os.remove("./data/SleepHistory.txt")
     sleepHistory = open("./data/SleepHistory.txt", 'x')
@@ -24,7 +24,7 @@ def get_fan_angle(posX, posY):
     return int(math.atan((posX-0.5)/OBSERVE_DISTANCE_TO_IMAGE)*180/math.pi+90), int(math.atan((posY-0.5)/OBSERVE_DISTANCE_TO_IMAGE)*180/math.pi+90)
 
 
-def get_body(pose_landmarks):
+def get_body(pose_landmarks): 
 
     x = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x +
          pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x +
@@ -49,7 +49,6 @@ def get_hip(pose_landmarks):
 def night_detect(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
     lightness = hsv_image[:, :, 2].mean()
-    print(lightness)
     if lightness < LIGHT_THRESHOLD:
         return True
     return False
@@ -123,7 +122,12 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
         cv2.rectangle(background, left_up, right_down, color, thickness[i])
 
     if warning:
-        cv2.rectangle(background, (500, 200), (600, 250), (0, 0, 255), -1)
+        cv2.rectangle(background, (650, 200), (775, 250), (0, 0, 255), -1)
+        text = "warning"
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        thickness = cv2.LINE_AA
+        cv2.putText(background, text, (650,235),
+                font, 1, (0, 0, 0), 1, thickness)
 
     text = str(mode)
     font = cv2.FONT_HERSHEY_SIMPLEX
