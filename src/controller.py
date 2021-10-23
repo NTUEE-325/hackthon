@@ -60,6 +60,7 @@ def write(msgWrite):
     bt.write(msgWrite + "\n")
 
 
+last_strength = 3  # record the last strength change [use in SetStrength()]
 bt = bluetooth("COM6")
 while not bt.is_open():
     pass
@@ -81,16 +82,45 @@ def SetMode(mode):
     elif (mode == "gym"):
         write("g")
     else:
-        write("_")
+        write("_")  # just a random char , mean nothing
     pass
 
 
 def SetAngle(x, y):
-    # x is horizontal, y is vertical
-    pass
+    # x is the horizontal angle, y is the vertical angle
+    hor_angle = ""
+    ver_angle = ""
+    hor_angle = str(x)
+    ver_angle = str(y)
+    if len(hor_angle) == 1:
+        hor_angle = "x00" + hor_angle
+    elif len(hor_angle) == 2:
+        hor_angle = "x0" + hor_angle
+    elif len(hor_angle) == 3:
+        hor_angle = "x" + hor_angle
+    else:
+        print("error in controller SetAngle!!!!")
+
+    if len(ver_angle) == 1:
+        ver_angle = "y00" + ver_angle
+    elif len(ver_angle) == 2:
+        ver_angle = "y0" + ver_angle
+    elif len(ver_angle) == 3:
+        ver_angle = "y" + ver_angle
+    else:
+        print("error in controller SetAngle!!!!")
+
+    write(hor_angle)
+    write(ver_angle)
 
 
 def SetStrength(n):  # 為加強or減弱
     # range from 1~
-
-    pass
+    if n > last_strength and n <= 5:
+        for i in range(n-last_strength):
+            write('+')
+    elif n < last_strength and n >= 1:
+        for i in range(last_strength-n):
+            write('-')
+    else:
+        pass
