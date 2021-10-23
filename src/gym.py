@@ -90,13 +90,15 @@ def classifyPose(landmarks, landmarks_visibility):
     # first check whether the body is in the scope.
 
     threshold = 0.95
-
+    body_slope = abs(landmarks[mp_pose.PoseLandmark.RIGHT_HIP][1] -
+                     landmarks[mp_pose.PoseLandmark.NOSE][1])/(landmarks[mp_pose.PoseLandmark.RIGHT_HIP][0] -
+                                                               landmarks[mp_pose.PoseLandmark.NOSE][0])
     enable_detection_dumbbell = (landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value] > threshold) or (
         landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value] > threshold)
     enable_detection_pushup = (landmarks_visibility[mp_pose.PoseLandmark.LEFT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_ELBOW.value] > threshold) or (
         landmarks_visibility[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value] > threshold) and (
         landmarks_visibility[mp_pose.PoseLandmark.RIGHT_HIP.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_HIP.value] > threshold) and (
-        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_KNEE.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_KNEE.value] > threshold)
+        landmarks_visibility[mp_pose.PoseLandmark.RIGHT_KNEE.value] > threshold and landmarks_visibility[mp_pose.PoseLandmark.LEFT_KNEE.value] > threshold) and (body_slope < 1)
 
     if enable_detection_pushup:
         if left_elbow_angle < 40 and right_elbow_angle < 40:
@@ -163,15 +165,12 @@ def gym_detect(image, results_pose_landmarks, detect_times, current_mode):
             if(time.time()-detect_times[0] < 10 or time.time()-detect_times[4] < 10):
                 dumbbell = True
 
-        '''label = classifyPose(landmarks, landmarks_visibility)
         if(label == "push-up-up"):
             detect_times[2] = time.time()
         if(label == "push-up-down"):
             detect_times[3] = time.time()
         if(abs(detect_times[3]-detect_times[2]) < 10):
             pushups = True
-        if(time.time()-detect_times[2] > 15 or time.time()-detect_times[3] > 15):
-            pushups = False'''
 
         if(pushups):
             return "push-up"
