@@ -163,7 +163,8 @@ def gym_detect(image, results_pose_landmarks, detect_times, current_mode):
         if(label == "hands-double-curl"):
             detect_times[4] = time.time()
         if current_mode != "gym":
-            if(abs(detect_times[4]-detect_times[1]) < 10):
+            if(abs(detect_times[4]-detect_times[1]) < 4) and time.time()-detect_times[4] < 4:
+                print(abs(detect_times[4]-detect_times[1]))
                 dumbbell = True
         else:
             if(time.time()-detect_times[0] < 10 or time.time()-detect_times[4] < 10):

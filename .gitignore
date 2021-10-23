@@ -1,4 +1,4 @@
-/data
-/src/tempCodeRunnerFile.py
-/src/__pycache__
-/src/test.py
+data/
+src/tempCodeRunnerFile.py
+src/__pycache__/
+src/test.py
