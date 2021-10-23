@@ -4,7 +4,7 @@ import numpy as np
 import time
 from gym import *
 from utility import *
-from controller import *
+#from controller import *
 import os
 if os.path.exists("./data/SleepHistory.txt"):
     os.remove("./data/SleepHistory.txt")
@@ -50,7 +50,6 @@ this is implemented in utility.py.
 air_conditioner_strength = 0  # strength of the air conditioner
 
 sleepHistory = open("./data/SleepHistory.txt", 'x')
-
 
 while cap.isOpened():
     cur_time = time.time()
@@ -119,7 +118,7 @@ while cap.isOpened():
             if mode != "gym":
                 print("gym mode")
                 mode = "gym"
-                SetMode("gym")
+                #SetMode("gym")
                 air_conditioner_direction = calculate_air_conditioner_direction(
                     posX, posY)
                 print("gym:", gym_detect(
@@ -140,7 +139,7 @@ while cap.isOpened():
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
                 print("study mode")
-                SetMode("study")
+                #SetMode("study")
                 mode = "study"
             if mode == "study":
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
@@ -149,7 +148,7 @@ while cap.isOpened():
         else:
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
-                    SetMode("normal")
+                    #SetMode("normal")
                     air_conditioner_direction = (
                         calculate_air_conditioner_direction_inverse(posX, posY))
                     print("normal mode")
