@@ -66,6 +66,6 @@ def calculate_air_conditioner_direction(posX, posY):
 
 
 def record_dangerous_sleeping():
-    sleepHistory = open("../data/SleepHistory.txt", "a")
+    sleepHistory = open("./data/SleepHistory.txt", "a")
     sleepHistory.write(time.time())
     sleepHistory.close()

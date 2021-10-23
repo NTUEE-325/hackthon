@@ -6,8 +6,8 @@ from gym import *
 from utility import *
 from controller import *
 import os
-if os.path.exists("../data/SleepHistory.txt"):
-    os.remove("../data/SleepHistory.txt")
+if os.path.exists("./data/SleepHistory.txt"):
+    os.remove("./data/SleepHistory.txt")
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -43,7 +43,12 @@ time_record = [0, 0, 0, 0, 0]
 # indices: [quilt_cover_true, quilt_cover_false, gym, normal, study]
 air_conditioner_strength_time_constant = 100
 # time constant for the adjustment of air conditioner strength (exponential interpolation)
+air_conditioner_strength = 0
+# strength of the air conditioner
+# when setting the real air conditioner strength, the strength is mapped to 1~5(int):
+# floor(air_conditioner_strength*5)+1
 
+center = (600, 300)
 # direction of the wind: initially at the center
 air_conditioner_direction = [0.5, 0.5]
 '''
@@ -54,17 +59,16 @@ if want to have "opposite direction":
 
 this is implemented in utility.py.
 '''
-air_conditioner_strength = 0
-# strength of the air conditioner
-# when setting the real air conditioner strength, the strength is mapped to 1~5(int):
-# floor(air_conditioner_strength*5)+1
 
-sleepHistory = open("../data/SleepHistory.txt", 'x')
+
+sleepHistory = open("./data/SleepHistory.txt", 'x')
+
 
 while cap.isOpened():
     cur_time = time.time()
     success, image = cap.read()
     h, w, _ = image.shape
+    #print(h, w)
     if not success:
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
@@ -203,6 +207,16 @@ while cap.isOpened():
         cv2.putText(image, text3, (100, 150),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
     cv2.imshow('MediaPipe Pose', image)
+
+    background = cv2.imread("./img/background.jpg")
+    text = str(mode)
+
+    cv2.arrowedLine(background, center, (50, 50),
+                    (0, 0, 0), 2, tipLength=0.5)
+
+    cv2.putText(background, text, (70, 280),
+                cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 0), 1, cv2.LINE_AA)
+    cv2.imshow('result', background)
     if cv2.waitKey(5) & 0xFF == 27:
         break
 cap.release()
