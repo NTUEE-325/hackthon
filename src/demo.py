@@ -210,21 +210,30 @@ while cap.isOpened():
     cv2.imshow('MediaPipe Pose', image)
 
     background = cv2.imread("./img/background.jpg")
-    text = str(mode)
+    
 
     normalized = ((air_conditioner_direction[0]-0.5)**2+(air_conditioner_direction[1]-0.5)**2)**0.5
     start_pos = (int(center[0]-arrow_length*(air_conditioner_direction[0]-0.5)/normalized), int(center[1]-arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
     end_pos = (int(center[0]+arrow_length*(air_conditioner_direction[0]-0.5)/normalized), int(center[1]+arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
-    print(normalized)
-    print(air_conditioner_direction[0], air_conditioner_direction[1])
     
     cv2.arrowedLine(background, start_pos, end_pos,
                     (0, 0, 0), 2, tipLength=0.5)
+    thickness = [-1,-1,-1,-1,2]
 
+    for i in range(5):
+        left_up = (100+i*55, 350)
+        right_down =  (135+i*55, 420)
+        color = (0, 0, 255) # red
+        cv2.rectangle(background, left_up, right_down, color, thickness[i]) 
 
-
-    cv2.putText(background, text, (70, 280),
-                cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 0), 1, cv2.LINE_AA)
+        
+    text = str(mode)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    thickness = cv2.LINE_AA
+    text_size = cv2.getTextSize(text, font , 3, thickness)[0]
+    #print(text_size)
+    cv2.putText(background, text, (230-int((text_size[0])/2), 280),
+                font, 3, (0, 0, 0), 1, thickness)
     cv2.imshow('result', background)
     if cv2.waitKey(5) & 0xFF == 27:
         break
