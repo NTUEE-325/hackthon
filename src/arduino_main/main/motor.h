@@ -25,21 +25,28 @@ void setup_motor(){
   stepper2.setMaxSpeed(1000);
   stepper2.setCurrentPosition(0);
 }
+int Return_steps1(int x){
+  return x*50; //計算葉片上揚x度時，齒輪需要轉幾個step (4096 step =一圈)
+}
 void Motor_UD(int x){
-  int steps = x*1 ;//計算葉片上揚x度時，齒輪需要轉幾個step (4096 step =一圈)
+  if (x<=0) stepper1.setSpeed(-1*motorspeed);
+  else stepper1.setSpeed(motorspeed);
+  stepper1.runSpeed();
+  /*
   while (stepper1.currentPosition() != steps) {
     if (x<=0) stepper1.setSpeed(-1*motorspeed);
     else stepper1.setSpeed(motorspeed);
     stepper1.runSpeed();
   }
+  */
+}
+int Return_steps2(int x){
+  return x*50; //計算葉片上揚x度時，齒輪需要轉幾個step (4096 step =一圈)
 }
 void Motor_RL(int x){
-  int steps = x*1 ;//計算葉片上揚x度時，齒輪需要轉幾個step (4096 step =一圈)
-  while (stepper2.currentPosition() != steps) {
-    if (x<=0) stepper2.setSpeed(-1*motorspeed);
-    else stepper2.setSpeed(motorspeed);
-    stepper2.runSpeed();
-  }
+  if (x<=0) stepper2.setSpeed(-1*motorspeed);
+  else stepper2.setSpeed(motorspeed);
+  stepper2.runSpeed();
 }
 
 #endif

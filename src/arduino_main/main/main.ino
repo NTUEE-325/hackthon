@@ -9,14 +9,19 @@
 #define GYMpin A1
 #define NIGHTpin A2
 #define STUDYpin A3
-int anglechange = 0;
+int xanglechange = 0;
+int yanglechange = 0;
+bool flag1 = true;
+bool flag2 = true;
+int steps1 = 0;
+int steps2 = 0;
 void setup()
 {
   Serial.begin (9600);             // Serial Port begin
   setup_BT();
   setup_lcd();
   setup_motor();
-  pinMode(GYMpin,OUTPUT);
+  pinMode (GYMpin,OUTPUT);
   pinMode (NIGHTpin,OUTPUT);
   pinMode (STUDYpin, OUTPUT);
   //lcd.setCursor(0,3);
@@ -29,7 +34,7 @@ void setup()
 void loop() {
   MODE mode = GETMODE();
   if (mode == DEFAULT_MODE){
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     //lcd.print(clear_line);
     //lcd.setCursor(0,2);
     lcd.print("DEFAULT_MODE        ");
@@ -42,7 +47,7 @@ void loop() {
     mode = NOTHING;
   }
   else if (mode == NIGHT_MODE){
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     //lcd.print(clear_line);
     //lcd.setCursor(0,1);
     lcd.print("NIGHT_MODE          ");
@@ -55,7 +60,7 @@ void loop() {
     mode = NOTHING;   
   }
   else if (mode == GYM_MODE){
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     //lcd.print(clear_line);
     //lcd.setCursor(0,1);
     lcd.print("GYM_MODE            ");
@@ -68,7 +73,7 @@ void loop() {
     mode = NOTHING;   
   }
   else if (mode == STUDY_MODE){
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     //lcd.print(clear_line);
     //lcd.setCursor(0,1);
     lcd.print("STUDY_MODE          ");
@@ -81,27 +86,44 @@ void loop() {
     mode = NOTHING;
   }
   else if (mode == WIND_UPDOWN){
+    //lcd.setCursor(0,1);
+    //lcd.print(clear_line);
     lcd.setCursor(0,1);
     lcd.print(clear_line);
+    xanglechange = countXAngle();
     lcd.setCursor(0,1);
-    lcd.print("WIND_UPDOWN");
-    anglechange = countXAngle();
-    lcd.setCursor(0,2);
-    lcd.print("TURN_UD");
-    lcd.print(anglechange);
-    Motor_UD(anglechange);
+    lcd.print("TURN_UD ");
+    lcd.print(xanglechange);
+    steps1 = Return_steps1(xanglechange);
+    if (stepper1.currentPosition() != steps1){
+      Motor_UD(steps1);
+      if (stepper1.currentPosition() != steps1) flag1 = false;
+      else {
+        flag1 = true;
+        //stepper1.setCurrentPosition(0);
+      }
+    }
     mode = NOTHING; 
   }
   else if (mode == WIND_RIGHTLEFT){
+    //lcd.setCursor(0,1);
+    //lcd.print(clear_line);
     lcd.setCursor(0,1);
     lcd.print(clear_line);
+    //lcd.print("WIND_RIGHTLEFT      ");
+    yanglechange = countYAngle();
     lcd.setCursor(0,1);
-    lcd.print("WIND_RIGHTLEFT");
-    anglechange = countYAngle();
-    lcd.setCursor(0,2);
-    lcd.print("TURN_RL");
-    lcd.print(anglechange);
-    Motor_RL(anglechange);
+    lcd.print("TURN_RL ");
+    lcd.print(yanglechange);
+    steps2 = Return_steps2(yanglechange);
+    if (stepper2.currentPosition() != steps2 ){
+      Motor_UD(steps2);
+      if (stepper2.currentPosition() != steps2) flag2 = false;
+      else {
+        flag2 = true;
+        //stepper2.setCurrentPosition(0);
+      }
+    }
     mode = NOTHING;
   }
   else if (mode == WIND_STRONG){
@@ -122,8 +144,26 @@ void loop() {
     lcd_windsmall();
     mode = NOTHING;
   }
-  else {
-    lcd.setCursor(0,1);
+  else{
+    if (flag1 == false){
+      Motor_UD(steps1);
+      if (stepper1.currentPosition() == steps1){
+        lcd.setCursor(0,1);
+        lcd.print(clear_line);
+        flag1 = true;
+        //stepper1.setCurrentPosition(0);
+      }
+    }
+    if (flag2 == false){
+      Motor_RL(steps2);
+      if (stepper2.currentPosition() == steps2) {
+        lcd.setCursor(0,1);
+        lcd.print(clear_line);
+        flag2 = true;
+        //stepper2.setCurrentPosition(0);
+      }
+    }
+    
     //lcd.print(clear_line);
   }
 }

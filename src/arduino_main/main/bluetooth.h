@@ -2,8 +2,8 @@
 #define BLUETOOTH.H
 
 #include <SoftwareSerial.h>
-#define TX_PIN 2 
-#define RX_PIN 3 
+#define TX_PIN 3 
+#define RX_PIN 2 
 SoftwareSerial BT(RX_PIN , TX_PIN);
 
 char message;
@@ -12,6 +12,9 @@ int third=0;
 int second=0;
 int first=0;
 int a=0; //use in countXAngle(),countYAngle(),
+char one;
+char two;
+char three;
 
 
 enum MODE{
@@ -30,16 +33,37 @@ void setup_BT(){
   BT.begin(9600);
 }
 
-int countXAngle(){
+/*int countXAngle(){
   third = BT.read()-48;
   second = BT.read()-48;
   first = BT.read()-48;
+  Serial.println(third);
+  Serial.println(second);
+  Serial.println(first);
   angle = third*100+second*10+first;
+  Serial.println(angle);
   a = angle-90;
+  Serial.println(a);
+  return a;
+}*/
+
+int countXAngle(){
+  three = BT.read();
+  two = BT.read();
+  one = BT.read();
+  Serial.println(three);
+  Serial.println(two);
+  Serial.println(one);
+  third = int(three)-48;
+  second = int(two)-48;
+  first = int(one)-48;
+  angle = third*100+second*10+first;
+  Serial.println(angle);
+  a = angle-90;
+  Serial.println(a);
   return a;
 }
-
-
+  
 int countYAngle(){
   third = BT.read()-48;
   second = BT.read()-48;
