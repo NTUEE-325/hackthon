@@ -6,7 +6,8 @@ mp_pose = mp.solutions.pose
 
 LIGHT_THRESHOLD = 100
 OBSERVE_DISTANCE_TO_IMAGE = 0.5
-
+arrow_length = 100
+center = (600, 350)
 # calculate the fan's angle according to the positions
 # obtained from the demo.py.
 
@@ -69,3 +70,36 @@ def record_dangerous_sleeping():
     sleepHistory = open("./data/SleepHistory.txt", "a")
     sleepHistory.write(time.time())
     sleepHistory.close()
+
+def draw_result(background, air_conditioner_direction, mode, air_conditioner_strength):
+    normalized = ((air_conditioner_direction[0]-0.5)**2+(air_conditioner_direction[1]-0.5)**2)**0.5
+    start_pos = (int(center[0]-arrow_length*(air_conditioner_direction[0]-0.5)/normalized), int(center[1]-arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
+    end_pos = (int(center[0]+arrow_length*(air_conditioner_direction[0]-0.5)/normalized), int(center[1]+arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
+    
+    thickness = [2,2,2,2,2]
+    color = (0, 0, 255)
+    for i in range(air_conditioner_strength):
+        thickness[i] = -1
+    if air_conditioner_strength < 3:
+        color = (0,255,0) 
+    elif air_conditioner_strength < 5:
+        color = (0,255,255)
+    
+
+    cv2.arrowedLine(background, start_pos, end_pos,
+                    (0, 0, 0), 2, tipLength=0.5)
+
+    for i in range(5):
+        left_up = (100+i*55, 350)
+        right_down =  (135+i*55, 420)
+         # red
+        cv2.rectangle(background, left_up, right_down, color, thickness[i]) 
+
+        
+    text = str(mode)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    thickness = cv2.LINE_AA
+    text_size = cv2.getTextSize(text, font , 3, thickness)[0]
+    #print(text_size)
+    cv2.putText(background, text, (230-int((text_size[0])/2), 280),
+                font, 3, (0, 0, 0), 1, thickness)
