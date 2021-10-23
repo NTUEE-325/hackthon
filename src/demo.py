@@ -1,9 +1,9 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-import time
 from gym import *
 from utility import *
+from constant import *
 # from controller import *
 import os
 if os.path.exists("./data/SleepHistory.txt"):
@@ -28,55 +28,6 @@ pose = mp_pose.Pose(
 cap = cv2.VideoCapture(0)
 
 
-mode = "init"
-# modes = [normal, study, night, gym]
-last_detect_chair_time = 0
-last_time = 0  # last time change mode
-buffer_time = 5
-chair_pos = 0
-chair_size = 0
-# detect for the gym mode
-detect_times = [time.time()-11, 0, time.time(), 0, time.time()-11]
-
-time_record = [0, 0, 0, 0, 0]
-# time_record records the starting time for each mode. only one of them is nonzero.
-# indices: [quilt_cover_true, quilt_cover_false, gym, normal, study]
-GYM_INDEX = 2
-NORMAL_INDEX = 3
-STUDY_INDEX = 4
-QUILT_COVER_FALSE_INDEX = 1
-QUILT_COVER_TRUE_INDEX = 0
-
-init_strength = 0.5
-# init strength to give the current strength
-
-air_conditioner_strength_time_constant = 100
-# time constant for the adjustment of air conditioner strength (exponential interpolation)
-
-air_conditioner_strength = 0.5
-# strength of the air conditioner
-# when setting the real air conditioner strength, the strength is mapped to 1~5(int):
-# floor(air_conditioner_strength*5)+1
-
-STUDY_MODE_BASE_STRENGTH = 0.5
-NORMAL_MODE_BASE_STRENGTH = 0.5
-GYM_MODE_BASE_STRENGTH = 1.0
-QUILT_COVER_MODE_BASE_STRENGTH = 0.5
-QUILT_NOT_COVER_MODE_BASE_STRENGTH = 0.0
-# final strength of each mode
-
-center = (600, 300)
-# direction of the wind: initially at the center
-air_conditioner_direction = [0.5, 0.5]
-'''
-if want to have "opposite direction":
-    1. detect the direction of people with respect to the point (0.5, 0.5)
-    2. air_conditioner_distance + people_position(respect to (0.5, 0.5)) remains constant (0.5)
-    ex. the people is in (0.2, 0.3). then the direction is (0.5, 0.5)+(0.3, 0.2)*sqrt(12)/sqrt(13)
-
-this is implemented in utility.py.
-'''
-
 sleepHistory = open("./data/SleepHistory.txt", 'x')
 
 while cap.isOpened():
@@ -94,7 +45,7 @@ while cap.isOpened():
 
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = cv2.flip(image, 1)
+    # image = cv2.flip(image, 1)
     results = pose.process(image)
 
     # Draw the pose annotation on the image.
@@ -252,13 +203,10 @@ while cap.isOpened():
     cv2.imshow('MediaPipe Pose', image)
 
     background = cv2.imread("./img/background.jpg")
-    text = str(mode)
 
-    cv2.arrowedLine(background, center, (50, 50),
-                    (0, 0, 0), 2, tipLength=0.5)
+    draw_result(background, air_conditioner_direction, mode,
+                math.floor(air_conditioner_strength*5)+1)
 
-    cv2.putText(background, text, (70, 280),
-                cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 0), 1, cv2.LINE_AA)
     cv2.imshow('result', background)
     if cv2.waitKey(5) & 0xFF == 27:
         break

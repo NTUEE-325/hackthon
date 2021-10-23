@@ -113,10 +113,10 @@ def classifyPose(landmarks, landmarks_visibility):
         if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
             label = 'hands-down'
 
-        if (left_elbow_angle < 70 or right_elbow_angle < 70) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
+        if (left_elbow_angle < 50 or right_elbow_angle < 50) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
             label = 'hands-curl'
 
-        if (left_elbow_angle < 70 and right_elbow_angle < 70) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
+        if (left_elbow_angle < 50 and right_elbow_angle < 50) and (left_shoulder_angle < 30 and right_shoulder_angle < 30):
             label = 'hands-double-curl'
     return label
 
