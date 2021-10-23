@@ -68,7 +68,7 @@ def calculate_air_conditioner_direction(posX, posY):
 
 def record_dangerous_sleeping():
     sleepHistory = open("./data/SleepHistory.txt", "a")
-    sleepHistory.write(time.time())
+    sleepHistory.write(str(time.ctime(time.time())))
     sleepHistory.close()
 
 
@@ -87,13 +87,13 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
     if air_conditioner_strength == 1:
         color = (0, 255, 0)
     elif air_conditioner_strength == 2:
-        color = (34,139,34)
+        color = (34, 139, 34)
     elif air_conditioner_strength == 3:
-        color = (0,255,255)
+        color = (0, 255, 255)
     elif air_conditioner_strength == 4:
-        color = (0,165,255)
+        color = (0, 165, 255)
     elif air_conditioner_strength == 5:
-        color = (0,0,255)
+        color = (0, 0, 255)
 
     cv2.arrowedLine(background, start_pos, end_pos,
                     (0, 0, 0), 2, tipLength=0.5)
@@ -105,7 +105,7 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
         cv2.rectangle(background, left_up, right_down, color, thickness[i])
 
     if warning:
-        cv2.rectangle(background, (500, 200), (600,250), (0,0,255), -1)
+        cv2.rectangle(background, (500, 200), (600, 250), (0, 0, 255), -1)
 
     text = str(mode)
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -114,4 +114,3 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
     # print(text_size)
     cv2.putText(background, text, (230-int((text_size[0])/2), 280),
                 font, 3, (0, 0, 0), 1, thickness)
-

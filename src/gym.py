@@ -112,7 +112,6 @@ def classifyPose(landmarks, landmarks_visibility):
                 if left_knee_angle > 155 and right_knee_angle > 155:
                     if left_hip_angle > 155 and right_hip_angle > 155:
                         label = 'push-up-up'
-        print(label)
 
     if enable_detection_dumbbell:
         if left_elbow_angle > 155 and left_shoulder_angle < 30 and right_elbow_angle > 155 and right_shoulder_angle < 30:
