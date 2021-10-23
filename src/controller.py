@@ -61,7 +61,7 @@ def write(msgWrite):
 
 
 last_strength = 3  # record the last strength change [use in SetStrength()]
-bt = bluetooth("COM5")
+bt = bluetooth("COM4")
 while not bt.is_open():
     pass
 print("BT Connected!")

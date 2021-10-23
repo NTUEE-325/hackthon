@@ -74,7 +74,7 @@ while cap.isOpened():
                 time_record[QUILT_COVER_FALSE_INDEX] = cur_time
                 print("night mode")
                 mode = "night"
-                # SetMode("night")
+                SetMode("night")
 
             # detect if the quilt cover the body
 
@@ -111,7 +111,7 @@ while cap.isOpened():
                 init_strength = air_conditioner_strength
                 print("gym mode")
                 mode = "gym"
-                # SetMode("gym")
+                SetMode("gym")
                 print("gym:", gym_detect(
                     image, results.pose_landmarks, detect_times, mode))
 
@@ -124,7 +124,7 @@ while cap.isOpened():
             last_time = cur_time
             if mode != "study":
                 print("study mode")
-                # SetMode("study")
+                SetMode("study")
                 mode = "study"
 
                 time_record[STUDY_INDEX] = cur_time
@@ -165,6 +165,8 @@ while cap.isOpened():
             # SetMode("normal")
             print("normal mode")
             mode = "normal"
+            SetMode(mode)
+            SetMode(mode)
             time_record[NORMAL_INDEX] = cur_time
             init_strength = air_conditioner_strength
 
@@ -183,7 +185,8 @@ while cap.isOpened():
                 chair_pos = detected_object.landmarks_2d.landmark[0]
 
                 chair_size = detected_object.scale
-
+    if frame % 40 == 0:
+        SetStrength(math.floor(air_conditioner_strength*5)+1)
     cv2.circle(
         image, (int(air_conditioner_direction[0]*w), int(air_conditioner_direction[1]*h)), 15, (255, 0, 0), -1)
     if results.pose_landmarks:
