@@ -10,7 +10,7 @@ chair_size = 0
 # detect for the gym mode
 detect_times = [time.time()-11, 0, time.time(), 0, time.time()-11]
 
-time_record = [0, 0, 0, 0, 0]
+time_record = [time.time(), time.time(), time.time(), time.time(), time.time()]
 # time_record records the starting time for each mode. only one of them is nonzero.
 # indices: [quilt_cover_true, quilt_cover_false, gym, normal, study]
 GYM_INDEX = 2
@@ -33,7 +33,7 @@ air_conditioner_strength = 0.5
 STUDY_MODE_BASE_STRENGTH = 0.5
 NORMAL_MODE_BASE_STRENGTH = 0.5
 GYM_MODE_BASE_STRENGTH = 1.0
-QUILT_COVER_MODE_BASE_STRENGTH = 0.5
+QUILT_COVER_MODE_BASE_STRENGTH = 0.3
 QUILT_NOT_COVER_MODE_BASE_STRENGTH = 0.0
 # final strength of each mode
 
@@ -48,3 +48,4 @@ if want to have "opposite direction":
 
 this is implemented in utility.py.
 '''
+quilt_cover = True
