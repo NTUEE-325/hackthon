@@ -1,14 +1,14 @@
 #ifndef MOTOR.H
 #define MOTOR.H
 
-#define motor1Pin1  4     // IN1 on the ULN2003 driver
-#define motor1Pin2  5      // IN2 on the ULN2003 driver
-#define motor1Pin3  6     // IN3 on the ULN2003 driver
-#define motor1Pin4  7     // IN4 on the ULN2003 driver
-#define motor2Pin1  8      // IN1 on the ULN2003 driver
-#define motor2Pin2  9      // IN2 on the ULN2003 driver
-#define motor2Pin3  10     // IN3 on the ULN2003 driver
-#define motor2Pin4  11     // IN4 on the ULN2003 driver
+#define motor1Pin1  30     // IN1 on the ULN2003 driver
+#define motor1Pin2  31      // IN2 on the ULN2003 driver
+#define motor1Pin3  32     // IN3 on the ULN2003 driver
+#define motor1Pin4  33     // IN4 on the ULN2003 driver
+#define motor2Pin1  38      // IN1 on the ULN2003 driver
+#define motor2Pin2  39      // IN2 on the ULN2003 driver
+#define motor2Pin3  40     // IN3 on the ULN2003 driver
+#define motor2Pin4  41     // IN4 on the ULN2003 driver
 
 
 
