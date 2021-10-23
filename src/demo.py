@@ -14,6 +14,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 mp_objectron = mp.solutions.objectron
 
+# detect chair
 objectron = mp_objectron.Objectron(static_image_mode=False,
                                    max_num_objects=1,
                                    min_detection_confidence=0.5,
@@ -37,6 +38,12 @@ chair_size = 0
 # detect for the gym mode
 detect_times = [time.time(), 0, time.time(), 0, 0]
 
+time_record = [0, 0, 0, 0, 0]
+# time_record records the ongoing time for each mode. only one of them is nonzero.
+# indices: [quilt_cover_true, quilt_cover_false, gym, normal, study]
+air_conditioner_strength_time_constant = 100
+# time constant for the adjustment of air conditioner strength (exponential interpolation)
+
 # direction of the wind: initially at the center
 air_conditioner_direction = [0.5, 0.5]
 '''
@@ -47,7 +54,10 @@ if want to have "opposite direction":
 
 this is implemented in utility.py.
 '''
-air_conditioner_strength = 0  # strength of the air conditioner
+air_conditioner_strength = 0
+# strength of the air conditioner
+# when setting the real air conditioner strength, the strength is mapped to 1~5(int):
+# floor(air_conditioner_strength*5)+1
 
 sleepHistory = open("../data/SleepHistory.txt", 'x')
 
@@ -77,7 +87,7 @@ while cap.isOpened():
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
     # Flip the image horizontally for a selfie-view display.
-    if cur_time-last_detect_chair_time>buffer_time and ( mode != "study") :
+    if cur_time-last_detect_chair_time > buffer_time and (mode != "study"):
         chair_pos = 0
         chair_size = 0
     if results.pose_landmarks:
@@ -104,7 +114,6 @@ while cap.isOpened():
                     record_dangerous_sleeping()
                     quilt_cover = True
 
-                
                 air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                     posX, posY)
                 # send to arduino (direction_x, direction_y)
@@ -152,7 +161,7 @@ while cap.isOpened():
                         calculate_air_conditioner_direction_inverse(posX, posY))
                     print("normal mode")
                     mode = "normal"
-                else: 
+                else:
                     air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                         posX, posY)
                 # print("normal")
