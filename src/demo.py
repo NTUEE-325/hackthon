@@ -143,7 +143,7 @@ while cap.isOpened():
         else:
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
-                    # SetMode("normal")
+                    SetMode("normal")
                     print("normal mode")
                     mode = "normal"
 
@@ -162,7 +162,7 @@ while cap.isOpened():
         results2 = objectron.process(image)
 
         if mode != "normal" and cur_time-last_time > buffer_time:
-            # SetMode("normal")
+            SetMode("normal")
             print("normal mode")
             mode = "normal"
             SetMode(mode)
