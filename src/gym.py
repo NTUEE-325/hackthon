@@ -172,14 +172,14 @@ def gym_detect(image, results_pose_landmarks, detect_times, current_mode):
             if(abs(detect_times[4]-detect_times[1]) < 4) and time.time()-detect_times[4] < 4:
                 dumbbell = True
         else:
-            if(time.time()-detect_times[0] < 10 or time.time()-detect_times[4] < 10):
+            if(time.time()-detect_times[0] < 5 or time.time()-detect_times[4] < 5):
                 dumbbell = True
         # print(label)
         if(label == "push-up-up"):
             detect_times[2] = time.time()
         if(label == "push-up-down"):
             detect_times[3] = time.time()
-        if(abs(detect_times[3]-detect_times[2]) < 10 and not (abs(time.time()-detect_times[3]) > 10 and abs(time.time()-detect_times[2]) > 10)):
+        if(abs(detect_times[3]-detect_times[2]) < 5 and (abs(time.time()-detect_times[3]) < 5 and abs(time.time()-detect_times[2]) < 5)):
             pushups = True
 
         if(pushups):

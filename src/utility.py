@@ -14,7 +14,7 @@ center = (600, 350)
 # obtained from the demo.py.
 
 
-def init(): 
+def init():
     if os.path.exists("./data/SleepHistory.txt"):
         os.remove("./data/SleepHistory.txt")
     sleepHistory = open("./data/SleepHistory.txt", 'x')
@@ -24,7 +24,7 @@ def get_fan_angle(posX, posY):
     return int(math.atan((posX-0.5)/OBSERVE_DISTANCE_TO_IMAGE)*180/math.pi+90), int(math.atan((posY-0.5)/OBSERVE_DISTANCE_TO_IMAGE)*180/math.pi+90)
 
 
-def get_body(pose_landmarks): 
+def get_body(pose_landmarks):
 
     x = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x +
          pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x +
@@ -36,15 +36,17 @@ def get_body(pose_landmarks):
          pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y) / 4
     return (x, y)
 
+
 def get_hip(pose_landmarks):
 
     x = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x +
-         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x ) / 2
+         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x) / 2
 
     y = (pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].y +
-         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y ) / 2
+         pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y) / 2
 
     return (x, y)
+
 
 def night_detect(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
@@ -98,6 +100,8 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
                int(center[1]+arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
 
     thickness = [2, 2, 2, 2, 2]
+    if(air_conditioner_strength > 5):
+        air_conditioner_strength = 5
     color = (0, 0, 255)
     for i in range(air_conditioner_strength):
         thickness[i] = -1
@@ -126,8 +130,8 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
         text = "warning"
         font = cv2.FONT_HERSHEY_SIMPLEX
         thickness = cv2.LINE_AA
-        cv2.putText(background, text, (650,235),
-                font, 1, (0, 0, 0), 1, thickness)
+        cv2.putText(background, text, (650, 235),
+                    font, 1, (0, 0, 0), 1, thickness)
 
     text = str(mode)
     font = cv2.FONT_HERSHEY_SIMPLEX

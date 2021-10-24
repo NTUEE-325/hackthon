@@ -143,7 +143,7 @@ while cap.isOpened():
         else:
             if cur_time-last_time > buffer_time:
                 if mode != "normal":
-                    # SetMode("normal")
+                    SetMode("normal")
                     print("normal mode")
                     mode = "normal"
 
@@ -157,12 +157,12 @@ while cap.isOpened():
         theta_x, theta_y = get_fan_angle(
             air_conditioner_direction[0], air_conditioner_direction[1])
         if frame % 40 == 0:
-            Set_Angle(theta_x, theta_y)
+            Set_Angle(180-theta_x, theta_y)
     else:
         results2 = objectron.process(image)
 
         if mode != "normal" and cur_time-last_time > buffer_time:
-            # SetMode("normal")
+            SetMode("normal")
             print("normal mode")
             mode = "normal"
             SetMode(mode)
@@ -186,6 +186,7 @@ while cap.isOpened():
 
                 chair_size = detected_object.scale
     if frame % 40 == 0:
+        print(math.floor(air_conditioner_strength*5)+1)
         SetStrength(math.floor(air_conditioner_strength*5)+1)
     cv2.circle(
         image, (int(air_conditioner_direction[0]*w), int(air_conditioner_direction[1]*h)), 15, (255, 0, 0), -1)
