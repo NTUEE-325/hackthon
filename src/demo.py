@@ -138,7 +138,7 @@ while cap.isOpened():
                     (cur_time-time_record[RELAX_INDEX]) * \
                     (0.8-init_strength)/10
             else:
-                air_conditioner_strength = 0.8+(RELAX_MODE_BASE_STRENGTH-0.8)*(1-math.exp(-(
+                air_conditioner_strength = 0.9+(RELAX_MODE_BASE_STRENGTH-0.9)*(1-math.exp(-(
                     cur_time-time_record[RELAX_INDEX]-10)/air_conditioner_strength_time_constant))
 
         else:
