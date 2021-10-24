@@ -1,7 +1,7 @@
 import time
 
 mode = "init"
-# modes = [normal, study, night, gym]
+# modes = [normal, RELAX, night, gym]
 last_detect_chair_time = 0
 last_time = 0  # last time change mode
 buffer_time = 5
@@ -12,10 +12,10 @@ detect_times = [time.time()-11, 0, time.time(), 0, time.time()-11]
 
 time_record = [time.time(), time.time(), time.time(), time.time(), time.time()]
 # time_record records the starting time for each mode. only one of them is nonzero.
-# indices: [quilt_cover_true, quilt_cover_false, gym, normal, study]
+# indices: [quilt_cover_true, quilt_cover_false, gym, normal, RELAX]
 GYM_INDEX = 2
 NORMAL_INDEX = 3
-STUDY_INDEX = 4
+RELAX_INDEX = 4
 QUILT_COVER_FALSE_INDEX = 1
 QUILT_COVER_TRUE_INDEX = 0
 
@@ -30,7 +30,7 @@ air_conditioner_strength = 0.5
 # when setting the real air conditioner strength, the strength is mapped to 1~5(int):
 # floor(air_conditioner_strength*5)+1
 
-STUDY_MODE_BASE_STRENGTH = 0.1
+RELAX_MODE_BASE_STRENGTH = 0.1
 NORMAL_MODE_BASE_STRENGTH = 0.5
 GYM_MODE_BASE_STRENGTH = 1.0
 QUILT_COVER_MODE_BASE_STRENGTH = 0.3

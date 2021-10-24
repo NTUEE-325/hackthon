@@ -72,10 +72,10 @@ readThread.start()
 
 
 def SetMode(mode):
-    # modes = ["normal", "study", "night", "gym"]
+    # modes = ["normal", "replace", "night", "gym"]
     if (mode == "normal"):
         write("d")
-    elif (mode == "study"):
+    elif (mode == "replace"):
         write("s")
     elif (mode == "night"):
         write("n")

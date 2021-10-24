@@ -56,7 +56,7 @@ while cap.isOpened():
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 
     # clear not in picture chair
-    if cur_time-last_detect_chair_time > buffer_time and (mode != "study"):
+    if cur_time-last_detect_chair_time > buffer_time and (mode != "relax"):
         chair_pos = 0
         chair_size = 0
 
@@ -120,25 +120,26 @@ while cap.isOpened():
             air_conditioner_strength = GYM_MODE_BASE_STRENGTH + (init_strength-GYM_MODE_BASE_STRENGTH)*math.exp(-(
                 cur_time-time_record[GYM_INDEX])/air_conditioner_strength_time_constant)
 
-        elif study_detect(results.pose_landmarks, chair_pos, chair_size):
+        elif relax_detect(results.pose_landmarks, chair_pos, chair_size):
             last_time = cur_time
-            if mode != "study":
-                print("study mode")
-                SetMode("study")
-                mode = "study"
+            if mode != "relax":
+                print("relax mode")
+                SetMode("relax")
+                mode = "relax"
 
-                time_record[STUDY_INDEX] = cur_time
+                time_record[RELAX_INDEX] = cur_time
                 init_strength = air_conditioner_strength
 
             air_conditioner_direction = calculate_air_conditioner_direction_inverse(
                 posX, posY)
 
-            if cur_time-time_record[STUDY_INDEX] < 10:
+            if cur_time-time_record[RELAX_INDEX] < 10:
                 air_conditioner_strength = init_strength + \
-                    (cur_time-time_record[STUDY_INDEX])*(0.8-init_strength)/10
+                    (cur_time-time_record[RELAX_INDEX]) * \
+                    (0.8-init_strength)/10
             else:
-                air_conditioner_strength = 0.8+(STUDY_MODE_BASE_STRENGTH-0.8)*(1-math.exp(-(
-                    cur_time-time_record[STUDY_INDEX]-10)/air_conditioner_strength_time_constant))
+                air_conditioner_strength = 0.8+(RELAX_MODE_BASE_STRENGTH-0.8)*(1-math.exp(-(
+                    cur_time-time_record[RELAX_INDEX]-10)/air_conditioner_strength_time_constant))
 
         else:
             if cur_time-last_time > buffer_time:
