@@ -6,7 +6,7 @@ import os
 
 mp_pose = mp.solutions.pose
 
-LIGHT_THRESHOLD = 100
+LIGHT_THRESHOLD = 150
 OBSERVE_DISTANCE_TO_IMAGE = 0.5
 arrow_length = 100
 center = (600, 350)
@@ -49,7 +49,7 @@ def get_hip(pose_landmarks):
 def night_detect(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
     lightness = hsv_image[:, :, 2].mean()
-    #print(lightness)
+    print(lightness)
     if lightness < LIGHT_THRESHOLD:
         return True
     return False

@@ -189,12 +189,14 @@ while cap.isOpened():
         # SetStrength(math.floor(air_conditioner_strength*5)+1)
     cv2.circle(
         image, (int(air_conditioner_direction[0]*w), int(air_conditioner_direction[1]*h)), 15, (255, 0, 0), -1)
+    '''
     if results.pose_landmarks:
         cv2.circle(
             image, (int(get_body(results.pose_landmarks)[0]*w), int(get_body(results.pose_landmarks)[1]*h)), 15, (0, 255, 0), -1)
         text3 = str(air_conditioner_strength)
         cv2.putText(image, text3, (100, 150),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 1, cv2.LINE_AA)
+    '''
     cv2.imshow('MediaPipe Pose', image)
 
     background = cv2.imread("./img/background.jpg")
