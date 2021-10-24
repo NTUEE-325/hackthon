@@ -112,7 +112,7 @@ def classifyPose(landmarks, landmarks_visibility):
     #print("4:", landmarks_visibility[mp_pose.PoseLandmark.RIGHT_ELBOW.value])
     #print("5:", body_slope < 1)
     if enable_detection_pushup:
-        print("enabled")
+        #print("enabled")
         if left_elbow_angle < 90 or right_elbow_angle < 90:
             if left_knee_angle > 135 or right_knee_angle > 135:
                 if left_hip_angle > 135 or right_hip_angle > 135:
@@ -179,7 +179,7 @@ def gym_detect(image, results_pose_landmarks, detect_times, current_mode):
             detect_times[2] = time.time()
         if(label == "push-up-down"):
             detect_times[3] = time.time()
-        if(abs(detect_times[3]-detect_times[2]) < 10 and not (abs(time.time()-detect_times[3]) > 10 and abs(time.time()-detect_times[2]) > 10)):
+        if(abs(detect_times[3]-detect_times[2]) < 5 and not (abs(time.time()-detect_times[3]) > 5 and abs(time.time()-detect_times[2]) > 5)):
             pushups = True
 
         if(pushups):

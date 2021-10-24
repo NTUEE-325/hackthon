@@ -49,6 +49,7 @@ def get_hip(pose_landmarks):
 def night_detect(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
     lightness = hsv_image[:, :, 2].mean()
+    #print(lightness)
     if lightness < LIGHT_THRESHOLD:
         return True
     return False
@@ -96,7 +97,8 @@ def draw_result(background, air_conditioner_direction, mode, air_conditioner_str
                  int(center[1]-arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
     end_pos = (int(center[0]+arrow_length*(air_conditioner_direction[0]-0.5)/normalized),
                int(center[1]+arrow_length*(air_conditioner_direction[1]-0.5)/normalized))
-
+    if air_conditioner_strength>5:
+        air_conditioner_strength = 5
     thickness = [2, 2, 2, 2, 2]
     color = (0, 0, 255)
     for i in range(air_conditioner_strength):
