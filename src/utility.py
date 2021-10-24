@@ -6,7 +6,7 @@ import os
 
 mp_pose = mp.solutions.pose
 
-LIGHT_THRESHOLD = 100
+LIGHT_THRESHOLD = 140
 OBSERVE_DISTANCE_TO_IMAGE = 0.5
 arrow_length = 100
 center = (600, 350)
