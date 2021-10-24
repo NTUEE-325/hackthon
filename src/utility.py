@@ -6,7 +6,7 @@ import os
 
 mp_pose = mp.solutions.pose
 
-LIGHT_THRESHOLD = 150
+LIGHT_THRESHOLD = 140
 OBSERVE_DISTANCE_TO_IMAGE = 0.5
 arrow_length = 100
 center = (600, 350)
@@ -55,7 +55,7 @@ def night_detect(image):
     return False
 
 
-def study_detect(pose_landmarks, chair_pos, chair_size):
+def relax_detect(pose_landmarks, chair_pos, chair_size):
     if chair_pos == 0:
         return False
     posX, posY = get_hip(pose_landmarks)

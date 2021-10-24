@@ -15,7 +15,7 @@ time_record = [time.time(), time.time(), time.time(), time.time(), time.time()]
 # indices: [quilt_cover_true, quilt_cover_false, gym, normal, study]
 GYM_INDEX = 2
 NORMAL_INDEX = 3
-STUDY_INDEX = 4
+RELAX_INDEX = 4
 QUILT_COVER_FALSE_INDEX = 1
 QUILT_COVER_TRUE_INDEX = 0
 
@@ -30,7 +30,7 @@ air_conditioner_strength = 0.5
 # when setting the real air conditioner strength, the strength is mapped to 1~5(int):
 # floor(air_conditioner_strength*5)+1
 
-STUDY_MODE_BASE_STRENGTH = 0.1
+RELAX_MODE_BASE_STRENGTH = 0.1
 NORMAL_MODE_BASE_STRENGTH = 0.5
 GYM_MODE_BASE_STRENGTH = 1.0
 QUILT_COVER_MODE_BASE_STRENGTH = 0.3

@@ -1,1 +1,1 @@
-rectangle
+study
