@@ -22,7 +22,7 @@ QUILT_COVER_TRUE_INDEX = 0
 init_strength = 0.5
 # init strength to give the current strength
 
-air_conditioner_strength_time_constant = 10
+air_conditioner_strength_time_constant = 7
 # time constant for the adjustment of air conditioner strength (exponential interpolation)
 
 air_conditioner_strength = 0.5
