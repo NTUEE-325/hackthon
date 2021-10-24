@@ -13,7 +13,7 @@ void setup_lcd(){
   // Turn on the blacklight and print a message.
   lcd.backlight();
   lcd.setCursor(0,0);
-  lcd.print("SETUP LCD :)");
+  lcd.print("PixArt-02");
   lcd.setCursor(0,3);
   lcd.print("flow:# # #");
   
