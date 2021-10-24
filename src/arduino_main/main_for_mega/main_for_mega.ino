@@ -261,7 +261,7 @@ void loop() {
     lcd.setCursor(0,1);
     lcd.print("TURN_RL ");
     lcd.print(xanglechange);
-    //laststeps1 = steps1;
+    /*//laststeps1 = steps1;
     Serial.write("steps:\n");
     Serial.println(steps1);
     steps1 = Return_steps1(xanglechange);
@@ -272,7 +272,7 @@ void loop() {
         flag1 = true;
         //stepper1.setCurrentPosition(0);
       }
-    }
+    }*/
     mode = NOTHING; 
   }
   else if (mode == WIND_UPDOWN){
@@ -285,7 +285,7 @@ void loop() {
     lcd.setCursor(0,1);
     lcd.print("TURN_UD ");
     lcd.print(yanglechange);
-    //laststeps2 = steps2;
+    /*//laststeps2 = steps2;
     Serial.write("steps:\n");
     Serial.println(steps2);
     //Serial.println(laststeps2);
@@ -297,7 +297,7 @@ void loop() {
         flag2 = true;
         //stepper2.setCurrentPosition(0);
       }
-    }
+    }*/
     mode = NOTHING;
   }
   else if (mode == WIND_STRONG){
