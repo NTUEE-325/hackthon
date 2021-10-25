@@ -13,7 +13,29 @@
 - Project in 2021 Mei Chu Hackathon
 - five students, currently NTUEE Sophomore
 
-![teams](https://github.com/NTUEE-325/hackthon/blob/main/img/team.jpg?raw=true)
+<img src="./img/team.jpg">
+
+## Porject
+
+- E-Air 智慧調節系統
+
+- 利用 meidapipe 的 pose, object detection 抓取骨架後，判斷人目前的行為模式，並客製化調整環境
+
+- 利用 pyserial 操控 arduino 板，除了以 LCD 板顯示資訊外，更以馬達模擬扇葉轉動
+
+## Result
+
+<img src="https://imgur.com/a/b3L2PZX">
+
+## PRIZES
+
+- 2021 梅竹黑克松梅竹大獎
+
+- 2021 梅竹黑克松原相組第一名
+
+# Reference
+
+- [mediapipe](https://mediapipe.dev/)
 
 ## Files in dump
 
