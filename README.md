@@ -1,13 +1,19 @@
 # hackthon
 
-pip install -r requirements.txt
-put file_path in IMAGE_FILES
-python test.py
+## QUICK START
 
-detect distance => maybe detect left and right
+- using python3.9
 
-TODO :
+- pip install -r requirements.txt
 
-1. python to arduino
-2. arduino implement
-3.
+- run demo.py
+
+## Team
+
+- five students from NTUEE 2 grades
+
+## Files in dump
+
+- test pose detection and count times
+
+- to slow for real time demo
