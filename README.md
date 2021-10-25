@@ -23,6 +23,8 @@
 
 - 利用 pyserial 操控 arduino 板，除了以 LCD 板顯示資訊外，更以馬達模擬扇葉轉動
 
+- 在 Relax mode 中，設計先升後降的風量變化；在 gym mode 中，追蹤人體並改變風向；並在 night mode 中，加入偵測踢被以防著涼。
+
 ## Result
 
 - relax & gym mode
