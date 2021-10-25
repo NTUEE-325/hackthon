@@ -19,7 +19,7 @@
 
 - E-Air 智慧調節系統
 
-- 利用 meidapipe 的 pose, object detection 抓取骨架後，判斷人目前的行為模式，並客製化調整環境
+- 利用 mediapipe 的 pose, object detection 抓取骨架後，判斷人目前的行為模式，並客製化調整環境
 
 - 利用 pyserial 操控 arduino 板，除了以 LCD 板顯示資訊外，更以馬達模擬扇葉轉動
 
