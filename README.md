@@ -6,7 +6,7 @@
 
 - pip install -r requirements.txt
 
-- connect blueteeth(without using blueteeth, please use beta version)
+- connect bluetooth(without using bluetooth, please use beta version)
 
 - run src/demo.py
 
