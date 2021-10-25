@@ -41,6 +41,8 @@
 
 - 2021 梅竹黑克松原相組第一名
 
+<img src="./img/prize.png">
+
 # Reference
 
 - [mediapipe](https://mediapipe.dev/)
