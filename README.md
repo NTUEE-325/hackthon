@@ -6,7 +6,7 @@
 
 - pip install -r requirements.txt
 
-- run demo.py
+- run src/demo.py
 
 ## Team
 
