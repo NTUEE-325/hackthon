@@ -17,7 +17,7 @@
 
 <img src="./img/team.jpg" width=600px>
 
-## Porject
+## Project
 
 - E-Air 智慧調節系統
 
