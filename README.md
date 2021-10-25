@@ -12,6 +12,8 @@
 
 - five students from NTUEE 2 grades
 
+![teams](https://github.com/NTUEE-325/hackthon/blob/main/img/team.jpg?raw=true)
+
 ## Files in dump
 
 - test pose detection and count times
