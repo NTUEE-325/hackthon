@@ -13,7 +13,7 @@
 - Project in 2021 Mei Chu Hackathon
 - five students, currently NTUEE Sophomore
 
-<img src="./img/team.jpg">
+<img src="./img/team.jpg" width=600px>
 
 ## Porject
 
@@ -41,7 +41,7 @@
 
 - 2021 梅竹黑克松原相組第一名
 
-<img src="./img/prize.png">
+<img src="./img/prize.png" width=600px>
 
 # Reference
 
