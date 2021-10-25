@@ -10,12 +10,12 @@
 
 ## Team
 
-- five students from NTUEE 2 grades
+- Project in 2021 Mei Chu Hackathon
+- five students, currently NTUEE Sophomore
 
 ![teams](https://github.com/NTUEE-325/hackthon/blob/main/img/team.jpg?raw=true)
 
 ## Files in dump
 
-- test pose detection and count times
-
-- to slow for real time demo
+- Test certain pose detection and count times.
+- Too slow for real time demo.
