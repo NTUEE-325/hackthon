@@ -25,7 +25,13 @@
 
 ## Result
 
-<img src="https://imgur.com/a/b3L2PZX">
+- relax & gym mode
+
+<img src = ./img/relax&gym.gif>
+
+- night mode
+
+<img src="./img/result.gif">
 
 ## PRIZES
 
